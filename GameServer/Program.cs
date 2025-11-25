@@ -1,5 +1,3 @@
-using GameServer.Model;
-using GameServer.Model.Games;
 using GameServer.View;
 
 namespace GameServer;
@@ -13,8 +11,6 @@ public sealed class Program
 
         builder.Services.AddControllers();
         builder.Services.AddSignalR();
-        builder.Services.AddScoped<GameService>();
-        builder.Services.AddSingleton<GamesManager>();
         builder.Services.AddHealthChecks();
 
         var app = builder.Build();
