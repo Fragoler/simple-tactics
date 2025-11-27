@@ -11,6 +11,10 @@ public sealed class EntitySystem : BaseSystem
     
     private readonly EntityIdGenerator _generator = new();
 
+    public IEnumerable<Entity> GetAllEntity(Game game)
+    {
+        return game.Entities.Values.Select(entInfo => new Entity(entInfo, game));
+    }
     
     public Entity? GetEntity(ulong entityId, Game game)
     {
@@ -30,8 +34,11 @@ public sealed class EntitySystem : BaseSystem
 
     public void DeleteEntity(Entity entity)
     {
-        var ev = new EntityRemoveEvent(entity);
-        _event.Raise(ev);
+        var ev = new EntityRemoveEvent()
+        {
+            Game = entity.Game,
+        };
+        _event.RaiseLocal(entity, ev);
         
         entity.Game.Entities.Remove(entity.Info.Id);
     }

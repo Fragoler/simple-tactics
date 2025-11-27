@@ -14,10 +14,10 @@ public class ComponentSystem : BaseSystem
     {
         base.Initialize();
         
-        _event.SubscribeEntity<EntityRemoveEvent>(RemoveAllComponents);
+        _event.Subscribe<EntityRemoveEvent>(RemoveAllComponents);
     }
 
-    private void RemoveAllComponents(Entity ent, BaseEntityEvent ev)
+    private void RemoveAllComponents(Entity ent, EntityRemoveEvent ev)
     {
         var componentTypes = ent.Info.Components.Keys.ToList();
         foreach (var compType in componentTypes)
@@ -29,6 +29,11 @@ public class ComponentSystem : BaseSystem
         if (ent.Info.Components.TryGetValue(typeof(T), out var comp))
             return (T) comp;
         return null;
+    }
+    
+    public Component? GetComponentOrDefault(Entity ent, Type type)
+    {
+        return ent.Info.Components.GetValueOrDefault(type);
     }
     
     public bool TryGetComponent<T>(Entity ent, [NotNullWhen(true)] out T? comp) where T : Component
@@ -47,11 +52,8 @@ public class ComponentSystem : BaseSystem
     public T AddComponent<T>(Entity ent) where T : Component
     {
         var comp = Activator.CreateInstance<T>();
+        comp.Owner = ent;
         
-        if (!ent.Game.Components.TryGetValue(typeof(T), out var comps))
-            ent.Game.Components.Add(typeof(T), comps = []);
-        
-        comps.Add(comp);
         ent.Info.Components.Add(typeof(T), comp);
         return comp;
     }
@@ -63,9 +65,6 @@ public class ComponentSystem : BaseSystem
     
     public void RemoveComponent(Entity ent, Type compType) 
     {
-        if (ent.Game.Components.TryGetValue(compType, out var comps))
-            comps.Remove(ent.Info.Components[compType]);
-
         ent.Info.Components.Remove(compType);
     }
 

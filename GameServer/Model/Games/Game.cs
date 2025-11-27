@@ -12,5 +12,4 @@ public class Game(string token)
     
     // Game entities
     public readonly Dictionary<ulong, Entities.EntityInfo> Entities = new();
-    public readonly Dictionary<Type, HashSet<Component>> Components = new();
 }

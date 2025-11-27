@@ -3,4 +3,4 @@
 namespace GameServer.Model.Entities;
 
 
-public sealed class EntityRemoveEvent(Entity ent) : BaseEntityEvent(ent);
+public sealed class EntityRemoveEvent : BaseEvent;

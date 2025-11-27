@@ -7,72 +7,63 @@ namespace GameServer.Model.EventBus;
 
 public sealed class EventBusSystem : BaseSystem
 {
+    [Dependency] private readonly EntitySystem _entity = null!;
     [Dependency] private readonly ComponentSystem _comp = null!;
     
-    private readonly Dictionary<Type, List<Action<BaseEvent>>> _eventSub = new();
-    private readonly Dictionary<Type, List<Action<Entity, BaseEntityEvent>>> _entityEventSub = new();
-    private readonly Dictionary<Type, List<(Action<Entity, BaseEntityEvent> callback, Type compType)>> _entityEventCompSub = new();
+    private Dictionary<Type, List<Action<Entity, BaseEvent>>> _subs = [];                   // Simple subs
+    private Dictionary<Type, List<(Type compType, Action<Entity, Component, BaseEvent> callback)>> _compSubs = []; // Only entity with comp subs
     
-    
-    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : BaseEvent
+    public void Subscribe<TEvent>(Action<Entity, TEvent> handler)
     {
-        var type = typeof(TEvent);
-        if (!_eventSub.TryGetValue(type, out var handlers))
-            _eventSub[type] = handlers = [];
-        handlers.Add((Action<BaseEvent>)handler);
-    }
-    
-    public void SubscribeEntity<TEvent>(Action<Entity, TEvent> handler) 
-        where TEvent : BaseEntityEvent
-    {
-        var eventType = typeof(TEvent);
-        if (!_entityEventSub.ContainsKey(eventType))
-            _entityEventSub[eventType] = [];
+        var evType = typeof(TEvent);
+        if (!_subs.ContainsKey(evType))
+            _subs[evType] = [];
         
-        _entityEventSub[eventType].Add(Wrapper);
+        _subs[evType].Add(Wrapper);
         return;
 
-        void Wrapper(Entity entity, BaseEntityEvent evt)
+        void Wrapper(Entity ent, BaseEvent ev)
         {
-            if (evt is TEvent typedEvent) handler(entity, typedEvent);
+            if (ev is TEvent tev)
+                handler(ent, tev);
         }
     }
     
-    public void SubscribeEntity<TEvent, TComp>(Action<Entity, TEvent> handler)
-        where TEvent : BaseEntityEvent
-        where TComp  : Component
+    public void Subscribe<TComp, TEvent>(Action<Entity, TComp, TEvent> handler)
     {
-        var type = typeof(TEvent);
-        if (!_entityEventCompSub.TryGetValue(type, out var handlers))
-            _entityEventCompSub[type] = handlers = [];
+        var evType = typeof(TEvent);
+        if (!_compSubs.ContainsKey(evType))
+            _compSubs[evType] = [];
         
-        handlers.Add((Wrapper, typeof(TComp)));
+        _compSubs[evType].Add((typeof(TComp), Wrapper));
         return;
 
-        void Wrapper(Entity entity, BaseEntityEvent evt)
+        void Wrapper(Entity ent, Component comp, BaseEvent ev)
         {
-            if (evt is TEvent typedEvent) handler(entity, typedEvent);
+            if (ev is TEvent tEv &&
+                comp is TComp tComp)
+                handler(ent, tComp, tEv);
         }
     }
     
-    public void Raise<TEvent>(TEvent ev) where TEvent : BaseEvent
+    public void RaiseGlobal(BaseEvent ev)
     {
-        var type = typeof(TEvent);
-        if (_eventSub.TryGetValue(type, out var handlers))
-            foreach (var handler in handlers.Cast<Action<TEvent>>())
-                handler(ev);
-
-
-        if (ev is not BaseEntityEvent entityEv)
-            return;
-
-        if (_entityEventSub.TryGetValue(type, out var entSubs))
-            foreach (var callback in entSubs)
-                ((Action<Entity, BaseEntityEvent>)callback)(entityEv.Ent, entityEv);     
+        foreach (var ent in _entity.GetAllEntity(ev.Game))
+            RaiseLocal(ent, ev);
+    }
+    
+    public void RaiseLocal(Entity entity, BaseEvent ev)
+    {
+        if (_subs.TryGetValue(ev.GetType(), out var subs))
+        {
+            foreach (var sub in subs)
+                sub(entity, ev);
+        }
         
-        if (_entityEventCompSub.TryGetValue(type, out var entCompSubs)) 
-            foreach (var (callback, compType) in entCompSubs)
-                if (_comp.HasComponent(entityEv.Ent, compType))
-                    ((Action<Entity, BaseEntityEvent>)callback)(entityEv.Ent, entityEv);
+        if (_compSubs.TryGetValue(ev.GetType(), out var compSubs))
+        {
+            foreach (var sub in compSubs.Where(p => _comp.HasComponent(entity, p.compType)))
+                sub.callback(entity, _comp.GetComponentOrDefault(entity, sub.compType)!, ev);
+        }
     }
 }
