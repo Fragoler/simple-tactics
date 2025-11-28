@@ -6,13 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace GameServer.Presenter;
 
 [ApiController]
-[Route("api")]
+[Route("api/game")]
 public class GamesController(IoCManager ioc, ILogger<GamesController> logger) : ControllerBase
 {
     private readonly ILogger _logger = logger;
     private readonly GamesSystem _games = ioc.Resolve<GamesSystem>();
 
-
+    
     [HttpPost("create")]
     public IActionResult CreateGame()
     {

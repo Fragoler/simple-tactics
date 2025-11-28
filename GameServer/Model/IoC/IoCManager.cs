@@ -5,10 +5,14 @@ namespace GameServer.Model.IoC;
 
 public sealed class IoCManager
 {
+    private readonly ILoggerFactory _factory;
+    
     private readonly Dictionary<Type, BaseSystem> _systems = new();
 
-    public IoCManager()
+    public IoCManager(ILoggerFactory factory)
     {
+        _factory = factory;
+        
         AutoRegisterSystems();
         InitializeAll();
     }
@@ -16,7 +20,7 @@ public sealed class IoCManager
     public void AutoRegisterSystems()
     {
         var systemTypes = FindDerivedTypes(Assembly.GetExecutingAssembly(), typeof(BaseSystem));
-
+        
         foreach (var type in systemTypes)
         {
             if (type.IsAbstract)
@@ -67,8 +71,13 @@ public sealed class IoCManager
     private void InjectDependencies(BaseSystem system)
     {
         var type = system.GetType();
-        var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
+        // Logger
+        var loggerProperty = typeof(BaseSystem).GetProperty("Logger", BindingFlags.NonPublic | BindingFlags.Instance);
+        loggerProperty?.SetValue(system, _factory.CreateLogger(type));
+        //
+
+        var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
         foreach (var field in fields)
         {
             if (field.GetCustomAttribute<DependencyAttribute>() is null)

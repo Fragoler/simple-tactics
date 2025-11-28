@@ -1,0 +1,7 @@
+﻿- Id: test-proto
+  Components:
+    - Type: Transform
+      Data:
+        Coords:
+          X: 1
+          Y: 1

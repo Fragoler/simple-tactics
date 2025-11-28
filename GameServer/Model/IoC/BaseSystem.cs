@@ -3,8 +3,10 @@
 
 public abstract class BaseSystem
 {
+    protected ILogger Logger { get; private set; } = null!;
+
     public virtual void Initialize()
     {
-        Console.WriteLine($"{GetType().Name} initialized");
+        Logger.LogInformation("{Name} initialized", GetType().Name);
     }
 }
