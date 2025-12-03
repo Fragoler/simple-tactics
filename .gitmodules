@@ -1,0 +1,3 @@
+[submodule "GameServer/Utils/Matrix"]
+	path = GameServer/Utils/Matrix
+	url = git@github.com:Fragoler/matrix-lib.git
