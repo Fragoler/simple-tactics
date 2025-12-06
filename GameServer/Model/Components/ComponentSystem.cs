@@ -15,7 +15,7 @@ public class ComponentSystem : BaseSystem
     {
         base.Initialize();
 
-        _event.Subscribe<EntityRemoveEvent>(RemoveAllComponents);
+        _event.SubscribeLocal<EntityRemoveEvent>(RemoveAllComponents);
     }
 
     private void RemoveAllComponents(Entity ent, EntityRemoveEvent ev)

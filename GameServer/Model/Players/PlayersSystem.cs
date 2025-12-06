@@ -35,18 +35,13 @@ public sealed class PlayersSystem : BaseSystem
         _players.Remove(ent);
         _entity.DeleteEntity(ent);
     }
-    
-    public bool TryGetGameByPlayerToken(string playerToken, [NotNullWhen(true)] out Game? game)
+
+    public Entity<ControlledComponent> AssignUnitToPlayer(Entity<PlayerComponent> player, Entity entity)
     {
-        game = null;
-        if (!TryFindPlayer(playerToken, out var entPlayer))
-            return false;
-
-        var ent  = entPlayer.Value.Item1;
-        var player = entPlayer.Value.Item2;
-
-        game = player.Game;
-        return true;
+        var controlled = _comp.EnsureComponent<ControlledComponent>(entity);
+        controlled.Player = player;
+        
+        return (entity, controlled);
     }
     
     private bool TryFindPlayer(string playerToken, [NotNullWhen(true)] out (Entity, PlayerComponent)? ent)

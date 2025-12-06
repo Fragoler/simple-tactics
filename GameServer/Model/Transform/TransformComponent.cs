@@ -1,18 +1,27 @@
+using System.Numerics;
 using GameServer.Model.Components;
 
 namespace GameServer.Model.Transform;
+
 
 public sealed class TransformComponent : Component
 {
     public Coordinates Coords = new();
 }
 
-public struct Coordinates(uint x, uint y)
+public record struct Coordinates(uint X, uint Y)
 {
-    public uint X = x;
-    public uint Y = y;
+    public uint X = X;
+    public uint Y = Y;
 
-    public Coordinates() : this(0, 0)
+    public void Set(Coordinates coords)
     {
+        X = coords.X;
+        Y = coords.Y;
     }
-}    
+    
+    public override string ToString()
+    {
+        return $"({X}, {Y})";
+    }
+}

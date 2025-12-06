@@ -1,5 +1,6 @@
 ﻿using GameServer.Model.Components;
 using GameServer.Model.Entities;
+using GameServer.Model.Map;
 using GameServer.Model.Players;
 
 namespace GameServer.Model.Games;
@@ -9,8 +10,8 @@ public class Game(string token)
 {
     public readonly string Token = token;
     
-    public List<(Entity, PlayerComponent)> Players = [];
-    public Entity Field;
+    public readonly List<(Entity, PlayerComponent)> Players = [];
+    public Entity<MapComponent> Map;
     
     // Game entities
     public readonly Dictionary<ulong, EntityInfo> Entities = new();

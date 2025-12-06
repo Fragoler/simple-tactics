@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using GameServer.Model.EventBus;
 using GameServer.Model.IoC;
 using GameServer.Model.Players;
 using GameServer.Model.Prototype;
@@ -10,7 +11,8 @@ public sealed class GamesSystem : BaseSystem
 {
     [Dependency] private PlayersSystem _players = null!;
     [Dependency] private PrototypeSystem _proto = null!;
-
+    [Dependency] private EventBusSystem _event = null!;
+    
     private readonly Dictionary<string, Game> _games = [];
 
 
@@ -19,6 +21,12 @@ public sealed class GamesSystem : BaseSystem
         var gameToken = Guid.NewGuid().ToString();
         var game = new Game(gameToken);
         _games.Add(gameToken, game);
+        
+        _event.RaiseGlobal(new GameCreatedEvent
+        {
+            Game = game
+        });
+        
         return game.Token;
     }
     

@@ -1,7 +1,10 @@
-﻿- Id: test-proto
+﻿- Id: test-unit
   Components:
-    - Type: Transform
+    
+- Id: test-map
+  Components:
+    - Type: Map
       Data:
-        Coords:
-          X: 1
-          Y: 1
+        MapName: 
+        Width: 9
+        Height: 7
