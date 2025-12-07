@@ -1,0 +1,3 @@
+[submodule "Utils/Matrix"]
+	path = Utils/Matrix
+	url = git@github.com:Fragoler/matrix-lib.git
