@@ -1,4 +1,0 @@
-﻿namespace GameServer.Model.Action;
-
-
-

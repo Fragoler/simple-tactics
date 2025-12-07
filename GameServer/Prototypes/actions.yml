@@ -66,7 +66,7 @@
     - Type: Action
       Data:
         Name: Melee
-        Icon: '🎯'
+        Icon: '⚔️'
         EffectId: Melee
         TargetType: Cell
         TargetFilter:
