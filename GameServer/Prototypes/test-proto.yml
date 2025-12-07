@@ -1,7 +1,22 @@
-﻿- Id: test-proto
+﻿- Id: test-unit
   Components:
-    - Type: Transform
+    - Type: Health
+
+- Id: test-map
+  Components:
+    - Type: Map
       Data:
-        Coords:
-          X: 1
-          Y: 1
+        MapName: Test Map
+        Width: 9
+        Height: 7
+        TerrainPrototypes:
+          - Type: 1
+            CoordsList:
+              - X: 3
+                Y: 0
+              - X: 3
+                Y: 1
+              - X: 5
+                Y: 6
+              - X: 5
+                Y: 5

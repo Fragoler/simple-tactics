@@ -1,6 +1,6 @@
-﻿namespace GameServer.Presenter.DTO.API;
+﻿namespace GameServer.Presenter.API.DTO;
 
-public class GameTokensDTO
+public class GameTokensDto
 {
     public string GameToken { get; init; } = "";
     public string[] PlayerTokens { get; init;  } = [];

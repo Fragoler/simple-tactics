@@ -3,9 +3,9 @@
 namespace GameServer.Model.EventBus;
 
 /// <summary>
-/// Простое событие. На него можно подписаться
+/// Simple event. You can subscribe on it
 /// </summary>
 public abstract class BaseEvent 
 {
-    public required Game Game { get; init;  }
+    public required Game Game { get; init; }
 }

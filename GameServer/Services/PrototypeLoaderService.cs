@@ -3,6 +3,10 @@ using GameServer.Model.Prototype;
 
 namespace GameServer.Services;
 
+
+/// <summary>
+/// Prototype service. It's needed to load prototypes before http server start
+/// </summary>
 public sealed class PrototypeLoaderService(
     IoCManager iocManager,
     IConfiguration conf,

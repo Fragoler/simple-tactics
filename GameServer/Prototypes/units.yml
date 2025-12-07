@@ -1,0 +1,46 @@
+﻿- Id: Square
+  Components:
+    - Type: Sprite
+      Data:
+        Type: Square
+    - Type: Health
+      Data:
+        MaxHealth: 10
+    - Type: Hurtable
+    - Type: ActionsContainer
+      Data:
+        ActionPrototypes:
+          - Move
+          - Melee
+            
+            
+- Id: Triangle
+  Components:
+    - Type: Sprite
+      Data:
+        Type: Triangle
+    - Type: Health
+      Data:
+        MaxHealth: 3
+    - Type: Hurtable
+    - Type: ActionsContainer
+      Data:
+        ActionPrototypes:
+          - Move
+          - Shoot            
+            
+            
+- Id: Circle
+  Components:
+    - Type: Sprite
+      Data:
+        Type: Circle
+    - Type: Health
+      Data:
+        MaxHealth: 7
+    - Type: Hurtable
+    - Type: ActionsContainer
+      Data:
+        ActionPrototypes:
+          - Move
+          - SelfDetonation

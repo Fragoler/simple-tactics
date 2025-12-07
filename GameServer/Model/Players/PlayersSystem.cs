@@ -13,6 +13,20 @@ public sealed class PlayersSystem : BaseSystem
     [Dependency] private readonly ComponentSystem _comp = null!;
 
     private readonly HashSet<Entity> _players = [];
+
+    public uint GetPlayerId(Entity entity)
+    {
+        if (!_comp.TryGetComponent<PlayerComponent>(entity, out var player))
+            throw new ArgumentException($"Player {entity} does not have a PlayerComponent");
+
+        return GetPlayerId((entity, player));
+    }
+    
+    public uint GetPlayerId(Entity<PlayerComponent> ent)
+    {
+        return Convert.ToUInt32(ent.Component.Game.Players.IndexOf(ent));
+    }
+
     
     public void CreateAttachedPlayer(Game game, out Entity ent, out PlayerComponent player)
     {
@@ -30,26 +44,21 @@ public sealed class PlayersSystem : BaseSystem
         if (!TryFindPlayer(playerToken, out var entPlayer))
             return;
 
-        var ent = entPlayer.Value.Item1;
+        var ent = entPlayer.Value.Ent;
         
         _players.Remove(ent);
         _entity.DeleteEntity(ent);
     }
-    
-    public bool TryGetGameByPlayerToken(string playerToken, [NotNullWhen(true)] out Game? game)
+
+    public Entity<ControlledComponent> AssignUnitToPlayer(Entity<PlayerComponent> player, Entity entity)
     {
-        game = null;
-        if (!TryFindPlayer(playerToken, out var entPlayer))
-            return false;
-
-        var ent  = entPlayer.Value.Item1;
-        var player = entPlayer.Value.Item2;
-
-        game = player.Game;
-        return true;
+        var controlled = _comp.EnsureComponent<ControlledComponent>(entity);
+        controlled.Player = player;
+        
+        return (entity, controlled);
     }
     
-    private bool TryFindPlayer(string playerToken, [NotNullWhen(true)] out (Entity, PlayerComponent)? ent)
+    public bool TryFindPlayer(string playerToken, [NotNullWhen(true)] out Entity<PlayerComponent>? ent)
     {
         foreach (var entPlayer in _players)
         {

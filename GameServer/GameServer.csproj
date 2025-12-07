@@ -16,12 +16,19 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Utils\Matrix\Matrix.Core\obj\Matrix.Core.csproj.nuget.dgspec.json" />
-    <_ContentIncludedByDefault Remove="Utils\Matrix\Matrix.Core\obj\project.assets.json" />
-    <_ContentIncludedByDefault Remove="Utils\Matrix\Matrix.Core\obj\project.packagespec.json" />
+    <ProjectReference Include="..\Utils\Matrix\Matrix.Core\Matrix.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\css\battle.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\core\Game.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\core\NetworkManager.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\core\Unit.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\main.js" />
+  </ItemGroup>
+  
   
 </Project>
 

@@ -1,0 +1,84 @@
+﻿- Id: Move
+  Components:
+    - Type: Action
+      Data:
+        Name: Move
+        Icon: '➜'
+        EffectId: Move
+        TargetType: Cell
+        TargetFilter:
+          Range: 1
+          RequiredFreeSpace: true
+    - Type: ActionHighlight
+      Data:
+        Layers: 
+          - Type: Selection
+            Pattern: Manhattan
+            Relative: Executor
+            Visibility: Selecting
+            Range: 1
+          - Type: Movement
+            Pattern: Self
+            Relative: Target
+            Visibility: Always
+            
+            
+- Id: SelfDetonation
+  Components:
+    - Type: Action
+      Data:
+        Name: Bum
+        Icon: '💥'
+        EffectId: SelfDetonation
+        TargetType: None
+        TargetFilter:
+          Range: 1.5
+    - Type: ActionHighlight
+      Data:
+        Layers:
+          - Type: Damage
+            Pattern: Circle
+            Relative: Executor
+            Visibility: Always
+            Range: 1.5
+            
+- Id: Shoot
+  Components:
+    - Type: Action
+      Data:
+        Name: Shoot
+        Icon: '🎯'
+        EffectId: Shoot
+        TargetType: Cell
+        TargetFilter:
+          Range: 7
+    - Type: ActionHighlight
+      Data:
+        Layers:
+          - Type: Damage
+            Pattern: Self
+            Relative: Target
+            Visibility: Always
+
+
+- Id: Melee
+  Components:
+    - Type: Action
+      Data:
+        Name: Melee
+        Icon: '🎯'
+        EffectId: Melee
+        TargetType: Cell
+        TargetFilter:
+          Range: 1
+    - Type: ActionHighlight
+      Data:
+        Layers:
+          - Type: Damage
+            Pattern: Self
+            Relative: Target
+            Visibility: Always
+          - Type: Selection
+            Pattern: Adjacent
+            Relative: Executor
+            Visibility: Selecting

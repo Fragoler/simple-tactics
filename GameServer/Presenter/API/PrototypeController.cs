@@ -2,7 +2,8 @@
 using GameServer.Model.Prototype;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GameServer.Presenter;
+namespace GameServer.Presenter.API;
+
 
 [ApiController]
 [Route("api/proto")]

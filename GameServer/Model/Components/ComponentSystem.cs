@@ -15,7 +15,7 @@ public class ComponentSystem : BaseSystem
     {
         base.Initialize();
 
-        _event.Subscribe<EntityRemoveEvent>(RemoveAllComponents);
+        _event.SubscribeLocal<EntityRemoveEvent>(RemoveAllComponents);
     }
 
     private void RemoveAllComponents(Entity ent, EntityRemoveEvent ev)
@@ -59,18 +59,18 @@ public class ComponentSystem : BaseSystem
         ApplyComponentData(comp, data);
 
         ent.Info.Components.Add(compType, comp);
+        
+        _event.RaiseLocal(ent, new ComponentInitEvent
+        {
+            Game = ent.Game
+        });
+        
         return comp;
     }
 
     public T AddComponent<T>(Entity ent, Dictionary<string, object>? data = null) where T : Component
     {
-        var comp = Activator.CreateInstance<T>();
-        comp.Owner = ent;
-
-        ApplyComponentData(comp, data);
-
-        ent.Info.Components.Add(typeof(T), comp);
-        return comp;
+        return (T)AddComponent(ent, typeof(T), data);
     }
 
     public void RemoveComponent<T>(Entity ent) where T : Component
@@ -110,6 +110,16 @@ public class ComponentSystem : BaseSystem
         
         if (targetType.IsInstanceOfType(value))
             return value;
+        
+        var underlyingType = Nullable.GetUnderlyingType(targetType);
+        if (underlyingType != null)
+        {
+            if (value is string str && string.IsNullOrWhiteSpace(str))
+                return null;
+            
+            return ConvertValue(value, underlyingType);
+        }
+
 
         if (value is IDictionary dictionary && !IsSimpleType(targetType))
         {
@@ -127,7 +137,7 @@ public class ComponentSystem : BaseSystem
         if (targetType.IsEnum)
             return Enum.Parse(targetType, value.ToString()!);
         
-        return Convert.ChangeType(value, targetType);
+        return Convert.ChangeType(value, targetType, System.Globalization.CultureInfo.InvariantCulture);
     }
 
     private object CreateComplexObject(Type targetType, Dictionary<string, object> data)

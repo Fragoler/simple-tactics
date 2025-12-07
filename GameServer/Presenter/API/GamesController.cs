@@ -1,9 +1,11 @@
 ﻿using GameServer.Model.Games;
 using GameServer.Model.IoC;
-using GameServer.Presenter.DTO.API;
+using GameServer.Model.Map;
+using GameServer.Presenter.API.DTO;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GameServer.Presenter;
+namespace GameServer.Presenter.API;
+
 
 [ApiController]
 [Route("api/game")]
@@ -11,6 +13,7 @@ public class GamesController(IoCManager ioc, ILogger<GamesController> logger) : 
 {
     private readonly ILogger _logger = logger;
     private readonly GamesSystem _games = ioc.Resolve<GamesSystem>();
+    private readonly MapSystem _map = ioc.Resolve<MapSystem>();
 
     
     [HttpPost("create")]
@@ -27,12 +30,15 @@ public class GamesController(IoCManager ioc, ILogger<GamesController> logger) : 
             _games.DeleteGame(gameToken);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
-
+        
         _logger.LogDebug("Players added: {Token1}, {Token2}", playerToken1, playerToken2);
-
+        
         if (_games.GetGame(gameToken) is not { } game) 
             return StatusCode(StatusCodes.Status500InternalServerError);
-            
+        
+        _map.LoadMapForGame(game);
+        _logger.LogInformation("Loaded map for game: {GameToken}", gameToken);
+        
         var dto = GameToDto(game);
         _logger.LogDebug("Returning DTO: GameToken={GameToken}, PlayerCount={Count}", 
             dto.GameToken, dto.PlayerTokens.Length);
@@ -43,7 +49,7 @@ public class GamesController(IoCManager ioc, ILogger<GamesController> logger) : 
     [HttpGet("list")]
     public IActionResult ListGames()
     {
-        var games = new GamesDTO
+        var games = new GamesDto
         {
             GameTokens = _games.GetGames().Select(GameToDto).ToArray()
         };
@@ -68,12 +74,12 @@ public class GamesController(IoCManager ioc, ILogger<GamesController> logger) : 
         return Ok();
     }
 
-    private GameTokensDTO GameToDto(Game game)
+    private GameTokensDto GameToDto(Game game)
     {
-        return new GameTokensDTO
+        return new GameTokensDto
         {
             GameToken = game.Token,
-            PlayerTokens = game.Players.Select(p => p.Item2.PlayerToken).ToArray()
+            PlayerTokens = game.Players.Select(p => p.Component.PlayerToken).ToArray()
         };
     }
 }

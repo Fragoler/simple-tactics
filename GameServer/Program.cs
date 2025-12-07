@@ -1,6 +1,7 @@
 using GameServer.Middleware;
 using GameServer.Model.IoC;
 using GameServer.Services;
+using GameHub = GameServer.Presenter.Socket.GameHub;
 
 namespace GameServer;
 
@@ -10,12 +11,18 @@ public sealed class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         
-        // ECS
+        // Model
         builder.Services.AddSingleton<IoCManager>();
+        //
+        
         
         // ASP NET Controllers
         builder.Services.AddControllers();
-        builder.Services.AddSignalR();
+        builder.Services.AddSignalR(options =>
+        {
+            options.MaximumReceiveMessageSize = 1024 * 1024; // 1Mb
+            //options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+        });
         //
         
         // Health checks
@@ -23,15 +30,11 @@ public sealed class Program
         builder.Services.AddHostedService<PrototypeLoaderService>();
         //
         
-        // Swagger
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        //
         
         var app = builder.Build();
         
         
-        // Middleware --
+        // Middleware
         app.UseRouting();
         app.UseWhen(
             context => context.Request.Path.StartsWithSegments("/api"),
@@ -39,25 +42,12 @@ public sealed class Program
         );
         
         
-        // Endpoints --- 
+        // Endpoints
         app.MapHealthChecks("/health");
         app.MapHealthChecks("/health/ready");
         app.MapControllers();
-        // app.MapHub<GameHub>("/game", options =>
-        // {
-        //     options.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets;
-        //     options.ApplicationMaxBufferSize = 64 * 1024;
-        //     options.TransportMaxBufferSize = 64 * 1024;
-        // });
+        app.MapHub<GameHub>("/game");
         
-        // Swagger in dev env
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-            app.MapSwagger();
-        }
-        //
 
         app.Run();
     }
