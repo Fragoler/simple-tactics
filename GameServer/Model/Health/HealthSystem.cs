@@ -20,7 +20,7 @@ public sealed class HealthSystem : BaseSystem
 
     private void OnComponentInit(Entity<HealthComponent> ent, ComponentInitEvent ev)
     {
-        ent.Component.MaxHealth = ent.Component.CurrentHealth;
+        ent.Component.CurrentHealth = ent.Component.MaxHealth;
     }
 }
 
