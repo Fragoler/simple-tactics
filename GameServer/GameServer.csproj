@@ -18,7 +18,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="Utils\Matrix\Matrix.Core\Matrix.Core.csproj" />
+    <_ContentIncludedByDefault Remove="Utils\Matrix\Matrix.Core\obj\Matrix.Core.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="Utils\Matrix\Matrix.Core\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="Utils\Matrix\Matrix.Core\obj\project.packagespec.json" />
   </ItemGroup>
   
 </Project>
