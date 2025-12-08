@@ -1,4 +1,13 @@
-﻿- Id: Move
+﻿- Id: Wait
+  Components:
+    - Type: Action
+      Data:
+        Name: Wait
+        Icon: '⏳'
+        EffectId: None
+        TargetType: None
+
+- Id: Move
   Components:
     - Type: Action
       Data:

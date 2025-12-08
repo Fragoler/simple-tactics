@@ -10,6 +10,7 @@
     - Type: ActionsContainer
       Data:
         ActionPrototypes:
+          - Wait
           - Move
           - Melee
             
@@ -26,6 +27,7 @@
     - Type: ActionsContainer
       Data:
         ActionPrototypes:
+          - Wait
           - Move
           - Shoot            
             
@@ -42,5 +44,6 @@
     - Type: ActionsContainer
       Data:
         ActionPrototypes:
+          - Wait
           - Move
           - SelfDetonation
