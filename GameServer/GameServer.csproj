@@ -20,14 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Utils\Matrix\Matrix.Core\Matrix.Core.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\css\battle.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\js\core\Game.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\js\core\NetworkManager.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\js\core\Unit.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\js\main.js" />
-  </ItemGroup>
   
   
 </Project>

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameServer", "GameServer", "{2FB8ADC9-5455-41BC-B59F-52FBE33C49DF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{F904F79D-75D5-4918-E32F-904F3CF671B2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Matrix", "Matrix", "{FD17CD08-99AF-B55A-C35A-452E1234FC05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matrix.Core", "Utils\Matrix\Matrix.Core\Matrix.Core.csproj", "{BE549072-F3AD-4D25-962E-F648FBDB4DD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServer", "GameServer\GameServer.csproj", "{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +33,18 @@ Global
 		{BE549072-F3AD-4D25-962E-F648FBDB4DD6}.Release|x64.Build.0 = Release|Any CPU
 		{BE549072-F3AD-4D25-962E-F648FBDB4DD6}.Release|x86.ActiveCfg = Release|Any CPU
 		{BE549072-F3AD-4D25-962E-F648FBDB4DD6}.Release|x86.Build.0 = Release|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Debug|x64.Build.0 = Debug|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Debug|x86.Build.0 = Debug|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Release|x64.ActiveCfg = Release|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Release|x64.Build.0 = Release|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Release|x86.ActiveCfg = Release|Any CPU
+		{9A08D6CA-09E1-4C8E-9A9C-FA8AB16A24E0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
