@@ -19,9 +19,10 @@ public sealed partial class GameHub
     {
         var ent = _action.GetAction(id);
         
-        HighlightedLayer[] layers = [];
-        if (_comp.TryGetComponent<ActionHighlightComponent>(ent, out var highlight))
-            layers = highlight.Layers;
+        List<HighlightedLayerDto> layers = [];
+        if (_comp.TryGetComponent<ActionHighlightComponent>(ent, out var highlight)) 
+            layers.AddRange(highlight.Layers.Select(layer => new HighlightedLayerDto(layer)));
+
 
         return new ActionDto
         {
@@ -30,10 +31,10 @@ public sealed partial class GameHub
             Name = ent.Component.Name,
             Icon = ent.Component.Icon,
 
-            TargetType = ent.Component.TargetType,
-            TargetFilter = ent.Component.TargetFilter,
+            TargetType = ent.Component.TargetType.ToString(),
+            TargetFilter = new TargetFilterDto(ent.Component.TargetFilter),
 
-            HighlightLayers = layers,
+            HighlightLayers = layers.ToArray(),
         };
     }
 }

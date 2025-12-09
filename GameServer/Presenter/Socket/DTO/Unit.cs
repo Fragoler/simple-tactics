@@ -9,7 +9,7 @@ public class UnitDto
     public uint? PlayerId { get; set; }
     
     public required PositionDto Coords { get; set; }
-    public required SpriteType Sprite { get; set; }
+    public required string Sprite { get; set; }
     
     public required string[] ActionIds { get; set; }
     

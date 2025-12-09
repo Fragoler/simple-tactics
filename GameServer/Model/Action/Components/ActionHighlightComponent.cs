@@ -11,12 +11,12 @@ public sealed class ActionHighlightComponent : Component
 
 public struct HighlightedLayer
 {
-    public HighlightType Type { get ; set; }
-    public HighlightPattern Pattern { get; set; }
-    public RelativeType Relative { get; set; }
-    public HighlightVisibility Visibility { get; set; }
-    
-    public double? Range  { get; set; }
+    public HighlightType Type;
+    public HighlightPattern Pattern;
+    public RelativeType Relative;
+    public HighlightVisibility Visibility;
+
+    public double? Range;
 }
 
 public enum HighlightPattern

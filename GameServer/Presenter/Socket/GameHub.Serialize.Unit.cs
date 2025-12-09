@@ -72,7 +72,7 @@ public sealed partial class GameHub
                 Y = entity.Component.Coords.Y,
             },
             
-            Sprite = sprite.Type,
+            Sprite = sprite.Type.ToString(),
             ActionIds = actionIds,
             
             CurHealth = curHealth,
