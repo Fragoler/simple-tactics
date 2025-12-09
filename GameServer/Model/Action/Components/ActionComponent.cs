@@ -26,6 +26,7 @@ public enum ActionTargetType
 
 public struct TargetFilter
 {
+    public Pattern Pattern = Pattern.None;
     public double Range = 1.5;
     public bool RequiredEnemy = false;
     public bool RequiredAlly =  false;

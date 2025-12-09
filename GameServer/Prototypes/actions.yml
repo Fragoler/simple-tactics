@@ -16,6 +16,7 @@
         EffectId: Move
         TargetType: Cell
         TargetFilter:
+          Pattern: Manhattan
           Range: 1
           RequiredFreeSpace: true
     - Type: ActionHighlight
@@ -41,6 +42,7 @@
         EffectId: SelfDetonation
         TargetType: None
         TargetFilter:
+          Pattern: Circle
           Range: 1.5
     - Type: ActionHighlight
       Data:
@@ -50,6 +52,10 @@
             Relative: Executor
             Visibility: Always
             Range: 1.5
+          - Type: Damage
+            Pattern: Self
+            Relative: Executor
+            Visibility: Always
             
 - Id: Shoot
   Components:
@@ -60,6 +66,7 @@
         EffectId: Shoot
         TargetType: Cell
         TargetFilter:
+          Pattern: Circle
           Range: 7
     - Type: ActionHighlight
       Data:
@@ -68,6 +75,11 @@
             Pattern: Self
             Relative: Target
             Visibility: Always
+          - Type: Selection
+            Pattern: Circle
+            Relative: Executor
+            Visibility: Selecting
+            Range: 7
 
 
 - Id: Melee
@@ -79,7 +91,7 @@
         EffectId: Melee
         TargetType: Cell
         TargetFilter:
-          Range: 1
+          Pattern: Adjacent
     - Type: ActionHighlight
       Data:
         Layers:

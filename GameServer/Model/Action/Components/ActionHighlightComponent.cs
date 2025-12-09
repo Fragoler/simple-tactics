@@ -12,14 +12,14 @@ public sealed class ActionHighlightComponent : Component
 public struct HighlightedLayer
 {
     public HighlightType Type;
-    public HighlightPattern Pattern;
+    public Pattern Pattern;
     public RelativeType Relative;
     public HighlightVisibility Visibility;
 
     public double? Range;
 }
 
-public enum HighlightPattern
+public enum Pattern
 { 
     Manhattan,
     Adjacent,

@@ -21,6 +21,7 @@ public struct TargetFilterDto
 {
     public TargetFilterDto(TargetFilter filter)
     {
+        Pattern = filter.Pattern.ToString();
         Range = filter.Range;
         RequiredFreeSpace = filter.RequiredFreeSpace;
         MaxTargets = filter.MaxTargets;
@@ -28,6 +29,7 @@ public struct TargetFilterDto
         RequiredEnemy = filter.RequiredEnemy;
     }
 
+    public string Pattern { get; set; } = "";
     public double Range { get; set; } = 1.5;
     public bool RequiredEnemy { get; set; } = false;
     public bool RequiredAlly { get; set; } =  false;
