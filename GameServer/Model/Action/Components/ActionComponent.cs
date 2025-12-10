@@ -20,7 +20,6 @@ public sealed class ActionComponent : Component
 public enum ActionTargetType
 {
     Cell,
-    Unit,
     None
 }
 
