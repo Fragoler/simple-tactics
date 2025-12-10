@@ -2,6 +2,7 @@
 using GameServer.Model.Entities;
 using GameServer.Model.Map;
 using GameServer.Model.Players;
+using GameServer.Model.Players.Components;
 
 namespace GameServer.Model.Games;
 

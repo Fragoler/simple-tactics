@@ -1,6 +1,6 @@
 ﻿using GameServer.Model.Entities;
 using GameServer.Model.Games;
-using GameServer.Model.Players;
+using GameServer.Model.Players.Components;
 using GameServer.Presenter.Socket.DTO;
 
 namespace GameServer.Presenter.Socket;
@@ -21,7 +21,7 @@ public sealed partial class GameHub
         {
             PlayerId = id,
             PlayerName = $"Player {id + 1}",
-            IsReady = false, // TODO : Real player status
+            IsReady = ent.Component.IsReady,
         };
     }
 }

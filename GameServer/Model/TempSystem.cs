@@ -6,6 +6,7 @@ using GameServer.Model.Health;
 using GameServer.Model.IoC;
 using GameServer.Model.Map;
 using GameServer.Model.Players;
+using GameServer.Model.Players.Systems;
 using GameServer.Model.Prototype;
 using GameServer.Model.Transform;
 

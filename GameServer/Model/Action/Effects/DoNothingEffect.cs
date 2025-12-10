@@ -1,9 +1,9 @@
 ﻿namespace GameServer.Model.Action.Effects;
 
 
-public sealed class DoNothingEffect : IActionEffect
+public sealed class DoNothingEffect : INoneTargetActionEffect
 {
-    public void Execute(ActionTarget target)
+    public void Execute()
     {
         
     }

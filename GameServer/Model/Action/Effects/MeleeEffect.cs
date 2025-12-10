@@ -1,9 +1,11 @@
-﻿namespace GameServer.Model.Action.Effects;
+﻿using GameServer.Model.Transform;
+
+namespace GameServer.Model.Action.Effects;
 
 
-public sealed class MeleeEffect : IActionEffect
+public sealed class MeleeEffect : ICellTargetActionEffect
 {
-    public void Execute(ActionTarget target)
+    public void Execute(Coordinates target)
     {
         
     }

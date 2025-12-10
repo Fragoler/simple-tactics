@@ -11,8 +11,8 @@ public sealed class TransformComponent : Component
 
 public record struct Coordinates(uint X, uint Y)
 {
-    public uint X = X;
-    public uint Y = Y;
+    public uint X { get; private set; } = X;
+    public uint Y { get; private set; } = Y;
 
     public static implicit operator Coordinates((uint X, uint Y) tuple) => new (tuple.X, tuple.Y);
     

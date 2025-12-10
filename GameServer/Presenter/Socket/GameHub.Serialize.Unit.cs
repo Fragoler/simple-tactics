@@ -3,7 +3,7 @@ using GameServer.Model.Action.Components;
 using GameServer.Model.Entities;
 using GameServer.Model.Games;
 using GameServer.Model.Health;
-using GameServer.Model.Players;
+using GameServer.Model.Players.Components;
 using GameServer.Model.Sprite;
 using GameServer.Model.Transform;
 using GameServer.Presenter.Socket.DTO;

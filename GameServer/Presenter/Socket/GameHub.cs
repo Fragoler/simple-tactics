@@ -1,7 +1,9 @@
 ﻿using GameServer.Model.Entities;
 using GameServer.Model.Games;
 using GameServer.Model.IoC;
-using GameServer.Model.Players;
+using GameServer.Model.Players.Components;
+using GameServer.Model.Players.Systems;
+using GameServer.Presenter.Socket.DTO;
 using Microsoft.AspNetCore.SignalR;
 
 namespace GameServer.Presenter.Socket;
@@ -74,7 +76,7 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
         
         try
         {
-            await SendPlayerId(player.Value);
+            await SendPlayerHimself(player.Value);
         }
         catch (Exception ex)
         {
@@ -102,6 +104,22 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
             await Clients.Caller.SendAsync("error", ex.Message);
         }
     }
+
+    public async Task RequestTurnEnd(ScheduledActionDto[] actionsDto)
+    {
+        var (game, player) = await ValidateAuth();
+        if (game == null || player == null) return;
+        
+        try
+        {
+            await HandlePlayerSchedule(player.Value, actionsDto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error requesting turn end");
+        }
+    }
+    
     
     private async Task<(Game? game, Entity<PlayerComponent>? player)> ValidateAuth()
     {
@@ -133,6 +151,12 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
             return (null, null);
         }
 
+        if (player.Value.Ent.Game != game)
+        {
+            await Clients.Caller.SendAsync("error", "Invalid player token");
+            return (null, null);
+        }
+        
         return (game, player);
     }
 

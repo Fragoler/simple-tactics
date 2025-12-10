@@ -55,5 +55,10 @@ public sealed partial class ActionSystem : BaseSystem
     {
         return _actions[id];
     }
+
+    public bool HasAction(string id)
+    {
+        return _actions.ContainsKey(id);
+    }
     
 }

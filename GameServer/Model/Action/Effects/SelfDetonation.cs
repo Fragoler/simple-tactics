@@ -1,9 +1,9 @@
 ﻿namespace GameServer.Model.Action.Effects;
 
 
-public sealed class SelfDetonation : IActionEffect
+public sealed class SelfDetonation : INoneTargetActionEffect
 {
-    public void Execute(ActionTarget target)
+    public void Execute()
     {
         
     }

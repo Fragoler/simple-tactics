@@ -21,7 +21,6 @@ public sealed class Program
         builder.Services.AddSignalR(options =>
         {
             options.MaximumReceiveMessageSize = 1024 * 1024; // 1Mb
-            //options.KeepAliveInterval = TimeSpan.FromSeconds(30);
         });
         //
         

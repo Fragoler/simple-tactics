@@ -2,6 +2,7 @@
 using GameServer.Model.EventBus;
 using GameServer.Model.IoC;
 using GameServer.Model.Players;
+using GameServer.Model.Players.Systems;
 using GameServer.Model.Prototype;
 
 namespace GameServer.Model.Games;
