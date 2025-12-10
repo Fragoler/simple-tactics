@@ -1,4 +1,5 @@
-﻿using GameServer.Model.Games;
+﻿using GameServer.Model.Entities;
+using GameServer.Model.Games;
 using GameServer.Model.IoC;
 using GameServer.Model.Players;
 using Microsoft.AspNetCore.SignalR;
@@ -11,8 +12,10 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
 {
     private readonly GamesSystem _games = ioc.Resolve<GamesSystem>();
     private readonly PlayersSystem _players = ioc.Resolve<PlayersSystem>();
-
     private readonly ILogger<GameHub> _logger = logger;
+    
+    private const string GameTokenKey = "GameToken";
+    private const string PlayerTokenKey = "PlayerToken";
 
     
     /// <summary>
@@ -22,22 +25,17 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
     {
         try
         {
-            var game = _games.GetGame(gameToken);
-            if (game == null)
-            {
-                await Clients.Caller.SendAsync("error", "Game not found");
-                return;
-            }
+            var (game, player) = await ValidateAuth(gameToken, playerToken);
+            if (game is null || player is null) return;
             
-            var playerExists = game.Players.Any(p => p.Component.PlayerToken == playerToken);
-            if (!playerExists)
-            {
-                await Clients.Caller.SendAsync("error", "Player not found in game");
-                return;
-            }
+            // Accept
+            Context.Items[GameTokenKey] = gameToken;
+            Context.Items[PlayerTokenKey] = playerToken;
             
             await Groups.AddToGroupAsync(Context.ConnectionId, gameToken);
             _logger.LogInformation("Player {PlayerToken} joined game {GameToken}", playerToken, gameToken);
+
+            await Clients.Caller.SendAsync("joinedGame");
         }
         catch (Exception ex)
         {
@@ -49,19 +47,13 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
     /// <summary>
     /// Client request all game state
     /// </summary>
-    public async Task RequestGameState(string gameToken, string playerToken)
+    public async Task RequestGameState()
     {
-        _logger.LogInformation("Requesting game state {GameToken} by player {playerToken} ", gameToken, playerToken);
+        var (game, player) = await ValidateAuth(); 
+        if (game == null || player == null) return;
         
         try
         {
-            var game = _games.GetGame(gameToken);
-            if (game == null)
-            {
-                await Clients.Caller.SendAsync("error", "Game not found");
-                return;
-            }
-
             await SendGameState(game);
         }
         catch (Exception ex)
@@ -75,19 +67,14 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
     /// <summary>
     /// Client request its id
     /// </summary>
-    public async Task RequestPlayerId(string gameToken, string playerToken)
+    public async Task RequestPlayerId()
     {
-        _logger.LogInformation("Requested player id  {PlayerToken} for game {GameToken}", playerToken, gameToken);
+        var (game, player) = await ValidateAuth(); 
+        if (game == null || player == null) return;
         
         try
         {
-            if (!_players.TryFindPlayer(playerToken, out var ent))
-            {
-                await Clients.Caller.SendAsync("error", "Player not found");
-                return;
-            }
-
-            await SendPlayerId(ent.Value);
+            await SendPlayerId(player.Value);
         }
         catch (Exception ex)
         {
@@ -100,18 +87,13 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
     /// <summary>
     /// Client request all game actions
     /// </summary>
-    public async Task RequestGameActions(string gameToken, string playerToken)
+    public async Task RequestGameActions()
     {
-        _logger.LogInformation("Requested game actions {PlayerToken} for game {GameToken}", playerToken, gameToken);
+        var (game, player) = await ValidateAuth(); 
+        if (game == null || player == null) return;
         
         try
         {
-            if (!_players.TryFindPlayer(playerToken, out var ent))
-            {
-                await Clients.Caller.SendAsync("error", "Player not found");
-                return;
-            }
-
             await SendGameActions();
         }
         catch (Exception ex)
@@ -121,6 +103,38 @@ public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
         }
     }
     
+    private async Task<(Game? game, Entity<PlayerComponent>? player)> ValidateAuth()
+    {
+        if (!Context.Items.TryGetValue(GameTokenKey, out var gameTokenObj) ||
+            !Context.Items.TryGetValue(PlayerTokenKey, out var playerTokenObj))
+        {
+            await Clients.Caller.SendAsync("error", "Not authenticated. Call JoinGame first.");
+            return (null, null);
+        }
+
+        var gameToken = gameTokenObj as string ?? string.Empty;
+        var playerToken = playerTokenObj as string ?? string.Empty;
+
+        return await ValidateAuth(gameToken, playerToken);
+    }
+    
+    private async Task<(Game? game, Entity<PlayerComponent>? player)> ValidateAuth(string gameToken, string playerToken)
+    {
+        var game = _games.GetGame(gameToken);
+        if (game == null)
+        {
+            await Clients.Caller.SendAsync("error", "Game not found");
+            return (null, null);
+        }
+
+        if (!_players.TryFindPlayer(playerToken, out var player))
+        {
+            await Clients.Caller.SendAsync("error", "Player not found");
+            return (null, null);
+        }
+
+        return (game, player);
+    }
 
     public override async Task OnConnectedAsync()
     {
