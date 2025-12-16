@@ -1,9 +1,11 @@
 ﻿namespace GameServer.Model.IoC;
 
 
-public abstract class BaseSystem
+public abstract class BaseSystem : ILoggerUser
 {
-    protected ILogger Logger { get; private set; } = null!;
+    protected IoCManager IoC { get; private set; } = null!;
+
+    public ILogger Logger { get; set; } = null!;
 
     public virtual void Initialize()
     {

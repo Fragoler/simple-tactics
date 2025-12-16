@@ -2,22 +2,21 @@
 
 namespace GameServer.Model.IoC;
 
-
 public sealed class IoCManager
 {
     private readonly ILoggerFactory _factory;
-    
-    private readonly Dictionary<Type, BaseSystem> _systems = new();
+    private readonly Dictionary<Type, object> _services = new(); 
 
     public IoCManager(ILoggerFactory factory)
     {
         _factory = factory;
+        _services.Add(typeof(IoCManager), this);
         
         AutoRegisterSystems();
         InitializeAll();
     }
     
-    public void AutoRegisterSystems()
+    private void AutoRegisterSystems()
     {
         var systemTypes = FindDerivedTypes(Assembly.GetExecutingAssembly(), typeof(BaseSystem));
         
@@ -25,80 +24,101 @@ public sealed class IoCManager
         {
             if (type.IsAbstract)
                 continue;
-                        
+            
             Register(type);
         }
     }
-    
 
-    public T Resolve<T>() where T : BaseSystem
+    public T Resolve<T>()
     {
-        if (_systems.TryGetValue(typeof(T), out var system))
-        {
-            return (T) system;
-        }
+        if (_services.TryGetValue(typeof(T), out var service))
+            return (T)service;
 
-        throw new InvalidOperationException($"System {typeof(T).Name} is not registered");
-    }
-    
-    public void Register<T>() where T : BaseSystem, new()
-    {
-        Register(typeof(T));
+        throw new InvalidOperationException($"Service {typeof(T).Name} is not registered");
     }
     
     private void Register(Type type)
     {
-        if (_systems.ContainsKey(type))
-            throw new InvalidOperationException($"System {type.Name} is already registered");
+        if (_services.ContainsKey(type))
+            throw new InvalidOperationException($"Service {type.Name} is already registered");
 
         if (Activator.CreateInstance(type) is BaseSystem system)
         {
-            _systems.Add(type, system);
+            _services.Add(type, system);
         }
         else
-            throw new OutOfMemoryException($"Error creating system type: {type.Name}");
+        {
+            throw new InvalidOperationException($"Error creating system type: {type.Name}");
+        }
     }
     
-    public void InitializeAll()
+    private void InitializeAll()
     {
-        foreach (var system in _systems.Values)
-            InjectDependencies(system);
+        foreach (var service in _services.Values)
+            InjectDependencies(service);
         
-        foreach (var system in _systems.Values) 
-            system.Initialize();
+        foreach (var service in _services.Values)
+            if (service is BaseSystem system)
+                system.Initialize();
     }
 
-    private void InjectDependencies(BaseSystem system)
+    public void InjectDependencies(object target)
     {
-        var type = system.GetType();
+        var type = target.GetType();
 
-        // Logger
-        var loggerProperty = typeof(BaseSystem).GetProperty("Logger", BindingFlags.NonPublic | BindingFlags.Instance);
-        loggerProperty?.SetValue(system, _factory.CreateLogger(type));
-        //
+
+        if (target is ILoggerUser logUser)
+        {
+            var loggerProperty = typeof(ILoggerUser).GetProperty("Logger",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+            if (loggerProperty != null && loggerProperty.CanWrite)
+            {
+                loggerProperty.SetValue(logUser, _factory.CreateLogger(type));
+            }
+        }
+
 
         var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
         foreach (var field in fields)
         {
             if (field.GetCustomAttribute<DependencyAttribute>() is null)
                 continue;
-    
-            if (_systems.TryGetValue(field.FieldType, out var dependency))
-                field.SetValue(system, dependency);
+
+            if (_services.TryGetValue(field.FieldType, out var dependency))
+            {
+                field.SetValue(target, dependency);
+            }
             else
+            {
                 throw new InvalidOperationException(
                     $"Dependency {field.FieldType.Name} not found for {type.Name}");
+            }
+        }
+        
+        var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        foreach (var property in properties)
+        {
+            if (property.GetCustomAttribute<DependencyAttribute>() is null)
+                continue;
+                
+            if (!property.CanWrite)
+                continue;
+
+            if (_services.TryGetValue(property.PropertyType, out var dependency))
+            {
+                property.SetValue(target, dependency);
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Dependency {property.PropertyType.Name} not found for {type.Name}");
+            }
         }
     }
 
     private static IEnumerable<Type> FindDerivedTypes(Assembly assembly, Type baseType)
     {
         return assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t) && t != baseType);
-    }
-    
-    private static IEnumerable<Type> GetClassesWithAttribute<TAttribute>(Assembly assembly) where TAttribute : Attribute
-    {
-        
-        return assembly.GetTypes().Where(t => t.IsClass && t.GetCustomAttribute<TAttribute>() is not null);
     }
 }

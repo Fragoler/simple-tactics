@@ -1,6 +1,11 @@
-﻿using GameServer.Model.Entities;
+﻿using GameServer.Model.Action.Systems;
+using GameServer.Model.Components;
+using GameServer.Model.Effect;
+using GameServer.Model.Entities;
+using GameServer.Model.EventBus;
 using GameServer.Model.Games;
 using GameServer.Model.IoC;
+using GameServer.Model.Phases;
 using GameServer.Model.Players.Components;
 using GameServer.Model.Players.Systems;
 using GameServer.Presenter.Socket.DTO;
@@ -9,16 +14,29 @@ using Microsoft.AspNetCore.SignalR;
 namespace GameServer.Presenter.Socket;
 
 
-public sealed partial class GameHub(IoCManager ioc, ILogger<GameHub> logger)
+public sealed partial class GameHub
     : Hub
 {
-    private readonly GamesSystem _games = ioc.Resolve<GamesSystem>();
-    private readonly PlayersSystem _players = ioc.Resolve<PlayersSystem>();
-    private readonly ILogger<GameHub> _logger = logger;
+    private readonly GamesSystem _games;
+    private readonly PlayersSystem _players;
+    private readonly ILogger<GameHub> _logger;
     
     private const string GameTokenKey = "GameToken";
     private const string PlayerTokenKey = "PlayerToken";
 
+    public GameHub(IoCManager ioc, ILogger<GameHub> logger)
+    {
+        _games = ioc.Resolve<GamesSystem>();
+        _players = ioc.Resolve<PlayersSystem>();
+        _comp = ioc.Resolve<ComponentSystem>();
+        _action = ioc.Resolve<ActionSystem>();
+        _entity = ioc.Resolve<EntitySystem>();
+        _phases = ioc.Resolve<PhasesSystem>();
+        _event = ioc.Resolve<EventBusSystem>();
+        _effects = ioc.Resolve<EffectSystem>();
+        
+        _logger = logger;
+    }
     
     /// <summary>
     /// Client join game

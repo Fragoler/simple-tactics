@@ -1,4 +1,6 @@
-﻿using GameServer.Model.Components;
+﻿using GameServer.Model.Action.Patterns;
+using GameServer.Model.Components;
+using GameServer.Model.Prototype;
 
 namespace GameServer.Model.Action.Components;
 
@@ -11,22 +13,10 @@ public sealed class ActionHighlightComponent : Component
 
 public struct HighlightedLayer
 {
-    public HighlightType Type;
-    public Pattern Pattern;
-    public RelativeType Relative;
-    public HighlightVisibility Visibility;
-
-    public double? Range;
-}
-
-public enum Pattern
-{ 
-    Manhattan,
-    Adjacent,
-    AdjacentDiagonal,
-    Circle,
-    Self,
-    None,
+    public HighlightType Type { get; set; }
+    public required IPattern Pattern { get; set; }
+    public RelativeType Relative { get; set; }
+    public HighlightVisibility Visibility { get; set; }
 }
 
 public enum RelativeType

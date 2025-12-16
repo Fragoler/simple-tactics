@@ -4,7 +4,7 @@ using GameServer.Model.EventBus;
 namespace GameServer.Model.Map;
 
 
-public sealed class AfterMapLoadedEvent : BaseEvent
+public sealed class MapInitEvent : BaseEvent
 {
     public Entity<MapComponent> Map;
 }

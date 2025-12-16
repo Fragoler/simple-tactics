@@ -1,20 +1,20 @@
 ﻿using GameServer.Model.Action.Effects;
+using GameServer.Model.Action.Patterns;
 using GameServer.Model.Components;
+using GameServer.Model.Prototype;
 
 namespace GameServer.Model.Action.Components;
 
 
 public sealed class ActionComponent : Component
 {
-    public string Name = "";
-    public string Icon = "X";
+    public string Name { get; set; } = "";
+    public string Icon { get; set; } = "X";
 
-    public ActionTargetType TargetType = ActionTargetType.None;
-    public TargetFilter TargetFilter = new();
+    public ulong Pace  { get; set; } = 10;
     
-    
-    public string EffectId = "None";
-    public IActionEffect? Effect;
+    public required IActionEffect Effect { get; set; }
+    public TargetFilter TargetFilter { get; set; }
 }
 
 public enum ActionTargetType
@@ -23,17 +23,12 @@ public enum ActionTargetType
     None
 }
 
-public struct TargetFilter
+[YamlType("TargetFilter")]
+public struct TargetFilter()
 {
-    public Pattern Pattern = Pattern.None;
-    public double Range = 1.5;
+    public required IPattern Pattern { get; set; }
     
-    public bool RequiredEnemy = false;
-    public bool RequiredAlly =  false;
-    public bool RequiredFreeSpace = false;
-    public uint MaxTargets = 1;
-
-    public TargetFilter()
-    {
-    }
+    public bool RequiredEnemy { get; set; } = false;
+    public bool RequiredAlly { get; set; } =  false;
+    public bool RequiredFreeSpace { get; set; } = false;
 }

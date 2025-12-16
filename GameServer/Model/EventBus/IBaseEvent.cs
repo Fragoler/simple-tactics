@@ -5,7 +5,12 @@ namespace GameServer.Model.EventBus;
 /// <summary>
 /// Simple event. You can subscribe on it
 /// </summary>
-public abstract class BaseEvent 
+public interface IBaseEvent 
+{
+    public Game Game { get; }
+}
+
+public abstract class BaseEvent : IBaseEvent
 {
     public required Game Game { get; init; }
 }

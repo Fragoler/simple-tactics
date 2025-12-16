@@ -24,33 +24,32 @@ public sealed class TempSystem : BaseSystem
     {
         base.Initialize();
 
-        _event.SubscribeGlobal<AfterMapLoadedEvent>(SummonTestEntities);
+        _event.SubscribeGlobal<MapLoadedEvent>(SummonTestEntities);
     }
 
-    private void SummonTestEntities(AfterMapLoadedEvent ev)
+    private void SummonTestEntities(MapLoadedEvent ev)
     {
         List<Entity> units1 = [], units2 = [];
         
-        units1.Add(_proto.SpawnPrototype("Square", ev.Game));
+        units1.Add(_proto.SpawnPrototype("Triangle", ev.Game));
         units1.Add(_proto.SpawnPrototype("Square", ev.Game));
         units1.Add(_proto.SpawnPrototype("Circle", ev.Game));
         
-        units2.Add(_proto.SpawnPrototype("Triangle", ev.Game));
+        units2.Add(_proto.SpawnPrototype("Circle", ev.Game));
         units2.Add(_proto.SpawnPrototype("Triangle", ev.Game));
         units2.Add(_proto.SpawnPrototype("Square", ev.Game));
 
         var neutral = _proto.SpawnPrototype("Square", ev.Game);
         
-        _comp.EnsureComponent<TransformComponent>(units1[0]).Coords.Set((1, 1));
-        _comp.EnsureComponent<TransformComponent>(units1[1]).Coords.Set((1, 5));
-        _comp.EnsureComponent<TransformComponent>(units1[2]).Coords.Set((2, 3));
+        _comp.EnsureComponent<TransformComponent>(units1[0]).Coords = (1, 1);
+        _comp.EnsureComponent<TransformComponent>(units1[1]).Coords = (1, 5);
+        _comp.EnsureComponent<TransformComponent>(units1[2]).Coords = (2, 3);
         
-        _comp.EnsureComponent<TransformComponent>(units2[0]).Coords.Set((6, 1));
-        _comp.EnsureComponent<TransformComponent>(units2[1]).Coords.Set((6, 5));
-        _comp.EnsureComponent<TransformComponent>(units2[2]).Coords.Set((7, 3));
+        _comp.EnsureComponent<TransformComponent>(units2[0]).Coords = (6, 1);
+        _comp.EnsureComponent<TransformComponent>(units2[1]).Coords = (6, 5);
+        _comp.EnsureComponent<TransformComponent>(units2[2]).Coords = (7, 3);
         
-        _comp.EnsureComponent<TransformComponent>(neutral).Coords.Set((4, 3));
-
+        _comp.EnsureComponent<TransformComponent>(neutral).Coords = (4, 3);
         
         Debug.Assert(ev.Game.Players.Count >= 2);
         

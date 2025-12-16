@@ -2,8 +2,11 @@
 using GameServer.Model.Components;
 using GameServer.Model.Players.Components;
 using GameServer.Model.Entities;
+using GameServer.Model.EventBus;
 using GameServer.Model.Games;
 using GameServer.Model.IoC;
+using GameServer.Model.Phases.Events;
+using GameServer.Model.Players.Events;
 
 namespace GameServer.Model.Players.Systems;
 
@@ -12,9 +15,36 @@ public sealed partial class PlayersSystem : BaseSystem
 {
     [Dependency] private readonly EntitySystem _entity = null!;
     [Dependency] private readonly ComponentSystem _comp = null!;
-
+    [Dependency] private readonly EventBusSystem _event = null!;
+    
     private readonly HashSet<Entity> _players = [];
 
+    public override void Initialize()
+    {
+        base.Initialize();
+        
+        _event.SubscribeGlobal<PlayerActionsScheduledEvent>(OnPlayerScheduled);
+        _event.SubscribeGlobal<CanSchedulePlayerActionsEvent>(OnBeforeScheduling);
+        _event.SubscribeGlobal<CanEndPlaningPhaseEvent>(OnCanEndPlaning);
+    }
+
+    private void OnCanEndPlaning(CanEndPlaningPhaseEvent ev)
+    {
+        if (ev.Game.Players.Any(p => !p.Component.IsReady))
+            ev.Cancel();
+    }
+    
+    private void OnPlayerScheduled(PlayerActionsScheduledEvent ev)
+    {
+        ev.Player.Component.IsReady = true;
+    }
+
+    private void OnBeforeScheduling(CanSchedulePlayerActionsEvent ev)
+    {
+        if (ev.Player.Component.IsReady)
+            ev.Cancel();
+    }
+    
     public uint GetPlayerId(Entity entity)
     {
         if (!_comp.TryGetComponent<PlayerComponent>(entity, out var player))

@@ -8,22 +8,18 @@ namespace GameServer.Model.Map;
 
 public sealed class MapComponent : Component
 {
-    public string MapName = "Test Map";
-    public uint Width  = 9;
-    public uint Height = 7;
+    public string MapName { get; set; } = "Test Map";
+    public uint Width { get; set; } = 9;
+    public uint Height { get; set; } = 7;
 
-    public List<TerrainPrototype> TerrainPrototypes = [];
+    public List<TerrainPrototype> TerrainPrototypes { get; set; } = [];
     public Matrix<uint>? Terrain = null;
 }
 
-public struct TerrainPrototype
+public struct TerrainPrototype()
 {
-    public Coordinates[] CoordsList = [];
-    public uint Type = 0;
-
-    public TerrainPrototype()
-    {
-    }
+    public Coordinates[] CoordsList { get; set; } = [];
+    public uint Type { get; set; } = 0;
 }
 
 

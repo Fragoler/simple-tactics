@@ -12,30 +12,6 @@ public class PrototypeController(IoCManager ioc, IConfiguration conf) : Controll
     private readonly PrototypeSystem _proto = ioc.Resolve<PrototypeSystem>();
     private readonly IConfiguration _conf = conf;
 
-    [HttpPost("load")]
-    public async Task<IActionResult> UploadPrototype(IFormFile? file)
-    {
-        if (file == null || file.Length == 0)
-            return BadRequest("No file uploaded");
-
-        if (!file.FileName.EndsWith(".yml") && !file.FileName.EndsWith(".yaml"))
-            return BadRequest("Only YAML files are allowed");
-
-        try
-        {
-            using var reader = new StreamReader(file.OpenReadStream());
-            var yamlContent = await reader.ReadToEndAsync();
-            
-            _proto.LoadPrototypes(yamlContent);
-            
-            return Ok(new { message = "Prototype loaded successfully", fileName = file.FileName });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-    }
-
     [HttpGet("list")]
     public IActionResult ListPrototypes()
     {

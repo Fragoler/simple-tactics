@@ -4,6 +4,7 @@ using GameServer.Model.EventBus;
 using GameServer.Model.Games;
 using GameServer.Model.IoC;
 using GameServer.Model.Prototype;
+using GameServer.Model.Transform;
 
 namespace GameServer.Model.Map;
 
@@ -43,12 +44,19 @@ public sealed partial class MapSystem : BaseSystem
             map.MapName, mapPrototypeId, game.Token);
         
         
-        _event.RaiseGlobal(new AfterMapLoadedEvent
+        _event.RaiseGlobal(new MapLoadedEvent
         {
             Game = game,
             Map = (ent, map)
         });
         
+        
         return (ent, map);
+    }
+
+    public uint GetTerrain(Game game, Coordinates cell)
+    {
+        var map = game.Map;
+        return map.Component.Terrain!.Get(cell.X, cell.Y);
     }
 }

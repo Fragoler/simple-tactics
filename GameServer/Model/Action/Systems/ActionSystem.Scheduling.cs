@@ -2,6 +2,7 @@
 using GameServer.Model.Entities;
 using GameServer.Model.IoC;
 using GameServer.Model.Players.Components;
+using GameServer.Model.Players.Events;
 using GameServer.Model.Transform;
 
 namespace GameServer.Model.Action.Systems;
@@ -16,13 +17,21 @@ public sealed partial class ActionSystem
         (Entity entity, string actionId, Coordinates? target)[] actions)
     {
         if (actions.Any(a => a.entity.Game != player.Ent.Game))
+        {
+            Logger.LogWarning("Cannot schedule player actions - client receive invalid game: {actions}", actions);
             return false;
-        
-        if (actions.Any(a => !CanScheduleAction(a)))
-            return false;
+        }
+            
         
         foreach (var action in actions)
             TryScheduleAction(action);
+        
+        
+        _event.RaiseGlobal(new PlayerActionsScheduledEvent
+        {
+            Game = player.Ent.Game,
+            Player = player,
+        });
         
         return true;
     }
@@ -36,6 +45,7 @@ public sealed partial class ActionSystem
     {
         if (!CanScheduleAction(entity, actionId, target))
             return false;
+            
         
         var scheduled = _comp.EnsureComponent<ScheduledActionComponent>(entity);
         
@@ -55,28 +65,32 @@ public sealed partial class ActionSystem
     {
         if (!HasAction(actionId))
         {
-            Logger.LogError("Action doesn't exist: {actionId}", actionId);
+            Logger.LogWarning("Action doesn't exist: {actionId}", actionId);
             return false;
         }
         
         if (!ValidateActionForEntity(entity, actionId))
         {
-            Logger.LogError("Entity cannot use this action: {actionId}", actionId);
+            Logger.LogWarning("Entity cannot use this action: {actionId}", actionId);
             return false;
         }
 
         if (target is { } coords &&
             !_transform.isValidCoords(entity.Game, coords))
+        {
+            Logger.LogWarning("Action has invalid target: {target}", coords);
             return false;
+        }
+
+
+        if (!ValidateTarget(entity, actionId, target))
+        {
+            Logger.LogWarning("Target {target} is not valid for action {aciton}", target, actionId);
+            return false;
+        }
+            
         
         return true;
-    }
-
-    private bool ValidateActionForEntity(Entity entity, string actionId)
-    {
-        return _comp.TryGetComponent<ActionsContainerComponent>(entity, out var container)
-            ? container.ActionPrototypes.Contains(actionId)
-            : throw new ArgumentException("Cannot find actions container for entity");
     }
     
 }

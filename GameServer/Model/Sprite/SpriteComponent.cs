@@ -5,7 +5,7 @@ namespace GameServer.Model.Sprite;
 
 public sealed class SpriteComponent : Component
 {
-    public SpriteType Type; 
+    public SpriteType Type { get; set; } 
 }
 
 public enum SpriteType {

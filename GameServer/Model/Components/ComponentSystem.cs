@@ -43,36 +43,13 @@ public class ComponentSystem : BaseSystem
         return comp != null;
     }
 
-    public T EnsureComponent<T>(Entity ent) where T : Component
+    public T EnsureComponent<T>(Entity ent) where T : Component, new()
     {
         if (!TryGetComponent<T>(ent, out var comp))
             comp = AddComponent<T>(ent);
         return comp;
     }
-
-
-    public Component AddComponent(Entity ent, Type compType, Dictionary<string, object>? data = null)
-    {
-        var comp = (Component)Activator.CreateInstance(compType)!;
-        comp.Owner = ent;
-
-        ApplyComponentData(comp, data);
-
-        ent.Info.Components.Add(compType, comp);
-        
-        _event.RaiseLocal(ent, new ComponentInitEvent
-        {
-            Game = ent.Game
-        });
-        
-        return comp;
-    }
-
-    public T AddComponent<T>(Entity ent, Dictionary<string, object>? data = null) where T : Component
-    {
-        return (T)AddComponent(ent, typeof(T), data);
-    }
-
+    
     public void RemoveComponent<T>(Entity ent) where T : Component
     {
         RemoveComponent(ent, typeof(T));
@@ -92,138 +69,54 @@ public class ComponentSystem : BaseSystem
     {
         return ent.Info.Components.ContainsKey(compType);
     }
+    
 
-    private void ApplyComponentData(Component component, Dictionary<string, object>? data)
+    public Component AddComponent(Entity ent, Type compType, Dictionary<string, object>? data = null)
     {
-        if (data == null)
-            return;
+        var comp = (Component)Activator.CreateInstance(compType)!;
+        if (data != null)
+            ApplyComponentData(comp, data);
 
+        AddComponent(ent, comp);
+        return comp;
+    }
+
+    private void ApplyComponentData(Component component, Dictionary<string, object> data)
+    {
         var componentType = component.GetType();
         
-        AttachData(component, componentType, data);
-    }
-
-    private object? ConvertValue(object? value, Type targetType)
-    {
-        if (value == null)
-            return null;
-        
-        if (targetType.IsInstanceOfType(value))
-            return value;
-        
-        var underlyingType = Nullable.GetUnderlyingType(targetType);
-        if (underlyingType != null)
-        {
-            if (value is string str && string.IsNullOrWhiteSpace(str))
-                return null;
-            
-            return ConvertValue(value, underlyingType);
-        }
-
-
-        if (value is IDictionary dictionary && !IsSimpleType(targetType))
-        {
-            var data = new Dictionary<string, object>();
-            foreach (DictionaryEntry entry in dictionary)
-                if (entry.Key is string key)
-                    data[key] = entry.Value!;
-            return CreateComplexObject(targetType, data);
-        }
-            
-        
-        if (value is IEnumerable<object> collection && !IsSimpleType(targetType))
-            return CreateCollection(targetType, collection);
-        
-        if (targetType.IsEnum)
-            return Enum.Parse(targetType, value.ToString()!);
-        
-        return Convert.ChangeType(value, targetType, System.Globalization.CultureInfo.InvariantCulture);
-    }
-
-    private object CreateComplexObject(Type targetType, Dictionary<string, object> data)
-    {
-        var instance = Activator.CreateInstance(targetType);
-
-        if (instance == null)
-            throw new InvalidOperationException($"Cannot create instance of {targetType.Name}");
-        
-        AttachData(instance, targetType, data);
-        
-        return instance;
-    }
-
-    private object CreateCollection(Type targetType, IEnumerable<object> collection)
-    {
-        // Check []
-        if (targetType.IsArray)
-        {
-            var elementType = targetType.GetElementType()!;
-            var items = collection.Select(item => ConvertValue(item, elementType)).ToArray();
-    
-            var array = Array.CreateInstance(elementType, items.Length);
-            Array.Copy(items, array, items.Length);
-            return array;
-        }
-
-        // Check Generic IEnumerable<T>
-        if (targetType.IsGenericType)
-        {
-            var genericTypeDef = targetType.GetGenericTypeDefinition();
-
-            if (genericTypeDef == typeof(List<>) ||
-                genericTypeDef == typeof(IList<>) ||
-                genericTypeDef == typeof(ICollection<>) ||
-                genericTypeDef == typeof(IEnumerable<>))
-            {
-                var elementType = targetType.GetGenericArguments()[0];
-                
-                var concreteType = targetType.IsInterface 
-                    ? typeof(List<>).MakeGenericType(elementType)
-                    : targetType;
-                
-                var list = (System.Collections.IList)Activator.CreateInstance(concreteType)!;
-            
-                foreach (var item in collection)
-                    list.Add(ConvertValue(item, elementType));
-            
-                return list;
-            }
-        }
-
-        throw new InvalidOperationException($"Unsupported collection type: {targetType.Name}");
-    }
-
-
-    private void AttachData(object obj, Type targetType, Dictionary<string, object> data)
-    {
         foreach (var kvp in data)
         {
-            var property = targetType.GetProperty(kvp.Key);
-
+            var property = componentType.GetProperty(kvp.Key);
             if (property != null && property.CanWrite)
             {
-                var value = ConvertValue(kvp.Value, property.PropertyType);
-                property.SetValue(obj, value);
+                property.SetValue(component, kvp.Value);
                 continue;
             }
             
-            
-            var field = targetType.GetField(kvp.Key);
-        
+            var field = componentType.GetField(kvp.Key);
             if (field != null)
             {
-                var value = ConvertValue(kvp.Value, field.FieldType);
-                field.SetValue(obj, value);
+                field.SetValue(component, kvp.Value);
             }
         }
     }
-    
-    private bool IsSimpleType(Type type)
+    public T AddComponent<T>(Entity ent) where T : Component, new()
     {
-        return type.IsPrimitive 
-               || type.IsEnum 
-               || type == typeof(string)
-               || type == typeof(DateTime) 
-               || type == typeof(Guid);
+        return (T)AddComponent(ent, new T());
+    }
+    
+    public Component AddComponent(Entity ent, Component comp)
+    {
+        comp.Owner = ent;
+        ent.Info.Components.Add(comp.GetType(), comp);
+        
+        _event.RaiseLocal(ent, new ComponentInitEvent
+        {
+            CompType = comp.GetType(),
+            Game = ent.Game
+        });
+        
+        return comp;
     }
 }

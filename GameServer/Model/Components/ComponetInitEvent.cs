@@ -3,4 +3,4 @@
 namespace GameServer.Model.Components;
 
 
-public class ComponentInitEvent : BaseEvent {}
+public class ComponentInitEvent : ComponentLifeCircleEvent {}

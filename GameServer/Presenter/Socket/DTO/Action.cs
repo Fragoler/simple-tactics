@@ -1,4 +1,5 @@
 ﻿using GameServer.Model.Action.Components;
+using GameServer.Model.Action.Patterns;
 
 namespace GameServer.Presenter.Socket.DTO;
 
@@ -21,30 +22,30 @@ public struct TargetFilterDto
 {
     public TargetFilterDto(TargetFilter filter)
     {
-        Pattern = filter.Pattern.ToString();
-        Range = filter.Range;
+        Pattern = filter.Pattern.Name;
         RequiredFreeSpace = filter.RequiredFreeSpace;
-        MaxTargets = filter.MaxTargets;
         RequiredAlly = filter.RequiredAlly;
         RequiredEnemy = filter.RequiredEnemy;
+        
+        Range = filter.Pattern is IRangePattern ranged ? ranged.Range : null;
     }
 
     public string Pattern { get; set; } = "";
-    public double Range { get; set; } = 1.5;
+    public double? Range { get; set; } = 1.5;
     public bool RequiredEnemy { get; set; } = false;
     public bool RequiredAlly { get; set; } =  false;
     public bool RequiredFreeSpace { get; set; } = false;
-    public uint MaxTargets { get; set; } = 1;
 }
 
 public struct HighlightedLayerDto
 {
     public HighlightedLayerDto(HighlightedLayer layer)
     {
-        Range = layer.Range;
+        Range = layer.Pattern is IRangePattern ranged
+            ? ranged.Range : null;
         
         Type = layer.Type.ToString();
-        Pattern = layer.Pattern.ToString();
+        Pattern = layer.Pattern.Name;
         Relative = layer.Relative.ToString();
         Visibility = layer.Visibility.ToString();
     }

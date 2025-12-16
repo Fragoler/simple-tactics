@@ -10,8 +10,8 @@ namespace GameServer.Presenter.Socket;
 
 public sealed partial class GameHub
 {
-    private readonly ComponentSystem _comp = ioc.Resolve<ComponentSystem>();
-    private readonly EntitySystem _entity = ioc.Resolve<EntitySystem>();
+    private readonly ComponentSystem _comp;
+    private readonly EntitySystem _entity;
     
     public async Task<GameStateDto> SerializeGameState(Game game)
     {

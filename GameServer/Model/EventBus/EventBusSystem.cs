@@ -9,13 +9,15 @@ public sealed class EventBusSystem : BaseSystem
 {
     [Dependency] private readonly ComponentSystem _comp = null!;
 
-    private Dictionary<Type, List<Action<BaseEvent>>> _publicSubs = [];
-    private Dictionary<Type, List<Action<Entity, BaseEvent>>> _subs = [];                                          // Simple subs
-    private Dictionary<Type, List<(Type compType, Action<Entity, Component, BaseEvent> callback)>> _compSubs = []; // Only entity with comp subs
+    private Dictionary<Type, List<Action<IBaseEvent>>> _publicSubs = [];
+    private Dictionary<Type, 
+        List<Action<Entity, IBaseEvent>>> _subs = [];                                          // Simple subs
+    private Dictionary<Type, 
+        List<(Type compType, Action<Entity, Component, IBaseEvent> callback)>> _compSubs = []; // Only entity with comp subs
 
 
     public void SubscribeGlobal<TEvent>(Action<TEvent> handler)
-        where TEvent : BaseEvent
+        where TEvent : IBaseEvent
     {
         var  evType = typeof(TEvent);
         if (!_publicSubs.ContainsKey(evType))
@@ -24,7 +26,7 @@ public sealed class EventBusSystem : BaseSystem
         _publicSubs[evType].Add(Wrapper);
         return;
 
-        void Wrapper(BaseEvent ev)
+        void Wrapper(IBaseEvent ev)
         {
             if (ev is TEvent tev)
                 handler(tev);
@@ -40,7 +42,7 @@ public sealed class EventBusSystem : BaseSystem
         _subs[evType].Add(Wrapper);
         return;
 
-        void Wrapper(Entity ent, BaseEvent ev)
+        void Wrapper(Entity ent, IBaseEvent ev)
         {
             if (ev is TEvent tev)
                 handler(ent, tev);
@@ -49,7 +51,7 @@ public sealed class EventBusSystem : BaseSystem
     
     public void SubscribeLocal<TComp, TEvent>(Action<Entity<TComp>, TEvent> handler)
         where TComp : Component
-        where TEvent : BaseEvent
+        where TEvent : IBaseEvent
     {
         var evType = typeof(TEvent);
         if (!_compSubs.ContainsKey(evType))
@@ -58,7 +60,7 @@ public sealed class EventBusSystem : BaseSystem
         _compSubs[evType].Add((typeof(TComp), Wrapper));
         return;
 
-        void Wrapper(Entity entity, Component comp, BaseEvent ev)
+        void Wrapper(Entity entity, Component comp, IBaseEvent ev)
         {
             if (ev is TEvent tEv &&
                 comp is TComp tComp)
@@ -66,8 +68,19 @@ public sealed class EventBusSystem : BaseSystem
         }
     }
 
+    public void RaiseCompLifeCircle(Entity entity, IComponentLifeCircleEvent ev)
+    {
+        if (!_compSubs.TryGetValue(ev.GetType(), out var compSubs))
+            return;
+        
+        foreach (var sub in compSubs
+                     .Where(p => ev.CompType == p.compType)
+                     .Where(p => _comp.HasComponent(entity, p.compType)))
+            sub.callback(entity, _comp.GetComponentOrDefault(entity, sub.compType)!, ev);
+    }
+    
 
-    public void RaiseGlobal(BaseEvent ev)
+    public void RaiseGlobal(IBaseEvent ev)
     {
         if (!_publicSubs.TryGetValue(ev.GetType(), out var subs))
             return;
@@ -76,7 +89,7 @@ public sealed class EventBusSystem : BaseSystem
             sub(ev);
     }
 
-    public void RaiseLocal(Entity entity, BaseEvent ev)
+    public void RaiseLocal(Entity entity, IBaseEvent ev)
     {
         if (_subs.TryGetValue(ev.GetType(), out var subs))
         {

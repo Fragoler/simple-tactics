@@ -14,6 +14,7 @@ public sealed partial class ActionSystem : BaseSystem
     [Dependency] private readonly EventBusSystem _event = null!;
     [Dependency] private readonly PrototypeSystem _proto = null!;
     [Dependency] private readonly ComponentSystem _comp = null!;
+    [Dependency] private readonly IoCManager _ioc = null!;
     
     private readonly Dictionary<string, Entity<ActionComponent>> _actions = [];
     
@@ -22,13 +23,7 @@ public sealed partial class ActionSystem : BaseSystem
     {
         base.Initialize();
         
-        _event.SubscribeLocal<ActionComponent, ComponentInitEvent>(OnActionInit);
         _event.SubscribeLocal<ActionsContainerComponent, ComponentInitEvent>(OnContainerInit);
-    }
-    
-    private void OnActionInit(Entity<ActionComponent> ent, ComponentInitEvent ev)
-    {
-        ent.Component.Effect = GetEffect(ent.Component.EffectId);
     }
 
     private void OnContainerInit(Entity<ActionsContainerComponent> ent, ComponentInitEvent ev)
@@ -41,7 +36,8 @@ public sealed partial class ActionSystem : BaseSystem
             var entity = _proto.SpawnPrototype(prototype, ev.Game);
                 
             Debug.Assert(_comp.TryGetComponent<ActionComponent>(entity, out var actionComp));
-                
+            _ioc.InjectDependencies(actionComp.Effect);
+            
             _actions.Add(prototype, (entity, actionComp));
         }
     }

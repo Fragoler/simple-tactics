@@ -5,5 +5,5 @@ namespace GameServer.Model.Action.Components;
 
 public sealed class ActionsContainerComponent : Component
 {
-    public string[] ActionPrototypes = [];
+    public string[] ActionPrototypes { get; set; } = [];
 }

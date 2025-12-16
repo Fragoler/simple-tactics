@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
+using Force.DeepCloner;
 using GameServer.Model.Components;
 using GameServer.Model.Entities;
 using GameServer.Model.Games;
 using GameServer.Model.IoC;
+using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -13,27 +15,34 @@ public sealed class PrototypeSystem : BaseSystem
     [Dependency] private EntitySystem _entity = null!;
     [Dependency] private ComponentSystem _comp = null!;
     
-    private readonly Dictionary<string, EntityPrototype> _prototypes = []; // Loaded protypes
-    private readonly Dictionary<string, Type> _compTypeCache = []; // Cache TypeName of components with their shortnames
-    private readonly IDeserializer _deserializer = new DeserializerBuilder()
-        .WithNamingConvention(PascalCaseNamingConvention.Instance)
-        .IgnoreUnmatchedProperties()
-        .Build();
-    
+    private readonly Dictionary<string, EntityPrototype> _prototypes = [];
+    private IDeserializer _deserializer = null!;
     
     private const string CompPostfix = "Component";
 
-
     public override void Initialize()
     {
-        BuildComponentTypeCache();
+        _deserializer = BuildDeserializer();
     }
 
-    private void BuildComponentTypeCache()
+    private IDeserializer BuildDeserializer()
+    {
+        var builder = new DeserializerBuilder()
+            .WithNamingConvention(PascalCaseNamingConvention.Instance)
+            .IgnoreUnmatchedProperties();
+        
+        RegisterComponentTypes(builder);
+        RegisterYamlTypes(builder);
+
+        return builder.Build();
+    }
+
+    private void RegisterComponentTypes(DeserializerBuilder builder)
     {
         var componentTypes = Assembly.GetExecutingAssembly()
             .GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && typeof(Component).IsAssignableFrom(t));
+            .Where(t => t is { IsClass: true, IsAbstract: false } && 
+                   typeof(Component).IsAssignableFrom(t));
 
         foreach (var type in componentTypes)
         {
@@ -41,8 +50,28 @@ public sealed class PrototypeSystem : BaseSystem
                 continue;
             
             var shortName = type.Name[..^CompPostfix.Length];
-            Logger.LogDebug("Cached type {CompType} as a {shortName}", type.Name, shortName);
-            _compTypeCache.Add(shortName, type);
+            var tagName = new TagName($"!type:{shortName}");
+            
+            builder.WithTagMapping(tagName, type);
+            
+            Logger.LogDebug("Registered component tag {Tag} -> {Type}", tagName, type.Name);
+        }
+    }
+
+    private void RegisterYamlTypes(DeserializerBuilder builder)
+    {
+        var yamlTypes = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => t.GetCustomAttribute<YamlTypeAttribute>() != null);
+
+        foreach (var type in yamlTypes)
+        {
+            var attr = type.GetCustomAttribute<YamlTypeAttribute>()!;
+            var tagName = new TagName($"!type:{attr.TypeName}");
+            
+            builder.WithTagMapping(tagName, type);
+            
+            Logger.LogDebug("Registered YAML tag {Tag} -> {Type}", tagName, type.Name);
         }
     }
 
@@ -75,41 +104,31 @@ public sealed class PrototypeSystem : BaseSystem
     
     public void LoadPrototypes(string yamlContent)  
     {
-        var prototypes = _deserializer.Deserialize<List<EntityPrototype>>(yamlContent);
-        
-        if (prototypes.Count == 0)
-            return;
+        Logger.LogDebug("Loading prototypes from YAML (length: {Length} chars)", yamlContent.Length);
+    
+        List<EntityPrototype>? prototypes;
+    
+        try
+        {
+            prototypes = _deserializer.Deserialize<List<EntityPrototype>>(yamlContent);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to deserialize YAML");
+            throw;
+        }
+
+        Logger.LogDebug("Deserialized {Count} prototypes", prototypes.Count);
 
         foreach (var prototype in prototypes)
         {
-            Logger.LogDebug("Loading prototype {PrototypeId}", prototype.Id);
-            if (_prototypes.ContainsKey(prototype.Id))
+            if (!_prototypes.TryAdd(prototype.Id, prototype))
                 throw new InvalidOperationException($"Prototype {prototype.Id} already exists");
-            
-            ResolvePrototypeComponents(prototype);
-            
-            _prototypes.Add(prototype.Id, prototype);
+
+            Logger.LogDebug("Successfully loaded prototype {Id}", prototype.Id);
         }
     }
 
-    private void ResolvePrototypeComponents(EntityPrototype prototype)
-    {
-        prototype.ResolvedComponents.Clear();
-        
-        foreach (var componentData in prototype.Components)
-        {
-            var componentType = ResolveComponentType(componentData.Type);
-            if (componentType == null)
-                throw new InvalidOperationException(
-                    $"Component type '{componentData.Type}' not found in prototype '{prototype.Id}'");
-
-            prototype.ResolvedComponents.Add(new ResolvedComponentData
-            {
-                ComponentType = componentType,
-                Data = componentData.Data
-            });
-        }
-    }
 
     public Entity SpawnPrototype(string prototypeId, Game game)
     {
@@ -117,14 +136,15 @@ public sealed class PrototypeSystem : BaseSystem
             throw new InvalidOperationException($"Prototype {prototypeId} not found");
 
         var entity = _entity.CreateEntity(game);
-
-        foreach (var resolvedComp in prototype.ResolvedComponents)
-            _comp.AddComponent(entity, resolvedComp.ComponentType, resolvedComp.Data);
+        
+        foreach (var cloned in prototype.Components.Select(component => component.DeepClone()))
+        {
+            cloned.Owner = entity;
+            _comp.AddComponent(entity, cloned);
+        }
 
         return entity;
     }
-
-    
     
     public bool HasPrototype(string prototypeId)
     {
@@ -139,10 +159,5 @@ public sealed class PrototypeSystem : BaseSystem
     public IEnumerable<string> GetAllPrototypeIds()
     {
         return _prototypes.Keys;
-    }
-    
-    private Type? ResolveComponentType(string shortName)
-    {
-        return _compTypeCache.GetValueOrDefault(shortName);
     }
 }

@@ -1,105 +1,101 @@
 ﻿- Id: Wait
   Components:
-    - Type: Action
-      Data:
-        Name: Wait
-        Icon: '⏳'
-        EffectId: None
-        TargetType: None
+    - !type:Action
+      Name: Wait
+      Icon: '⏳'
+      Pace: 0
+      TargetFilter: !type:TargetFilter
+        Pattern: !type:Self {}
+      Effect: !type:None {}
 
 - Id: Move
   Components:
-    - Type: Action
-      Data:
-        Name: Move
-        Icon: '➜'
-        EffectId: Move
-        TargetType: Cell
-        TargetFilter:
-          Pattern: Manhattan
+    - !type:Action
+      Name: Move
+      Icon: '➜'
+      Pace: 3
+      TargetFilter: !type:TargetFilter
+        RequiredFreeSpace: true
+        Pattern: !type:Manhattan
           Range: 1
-          RequiredFreeSpace: true
-    - Type: ActionHighlight
-      Data:
-        Layers: 
-          - Type: Selection
-            Pattern: Manhattan
-            Relative: Executor
-            Visibility: Selecting
+      Effect: !type:Move {}
+    - !type:ActionHighlight
+      Layers:
+        - Type: Selection
+          Pattern: !type:Manhattan
             Range: 1
-          - Type: Movement
-            Pattern: Self
-            Relative: Target
-            Visibility: Always
-            
-            
+          Relative: Executor
+          Visibility: Selecting
+        - Type: Movement
+          Pattern: !type:Self {}
+          Relative: Target
+          Visibility: Always
+
 - Id: SelfDetonation
   Components:
-    - Type: Action
-      Data:
-        Name: Bum
-        Icon: '💥'
-        EffectId: SelfDetonation
-        TargetType: None
-        TargetFilter:
-          Pattern: Circle
-          Range: 1.5
-    - Type: ActionHighlight
-      Data:
-        Layers:
-          - Type: Damage
-            Pattern: Circle
-            Relative: Executor
-            Visibility: Always
+    - !type:Action
+      Name: Bum
+      Icon: '💥'
+      Pace: 20
+      TargetFilter: !type:TargetFilter
+        Pattern: !type:Self {}
+      Effect: !type:Explosion
+        Damage: 10
+        Range: 1.5
+    - !type:ActionHighlight
+      Layers:
+        - Type: Damage
+          Pattern: !type:Circle
             Range: 1.5
-          - Type: Damage
-            Pattern: Self
-            Relative: Executor
-            Visibility: Always
-            
+          Relative: Executor
+          Visibility: Always
+        - Type: Damage
+          Pattern: !type:Self {}
+          Relative: Executor
+          Visibility: Always
+
+
 - Id: Shoot
   Components:
-    - Type: Action
-      Data:
-        Name: Shoot
-        Icon: '🎯'
-        EffectId: Shoot
-        TargetType: Cell
-        TargetFilter:
-          Pattern: Circle
+    - !type:Action
+      Name: Shoot
+      Icon: '🎯'
+      Pace: 5
+      TargetFilter: !type:TargetFilter
+        Pattern: !type:Circle
           Range: 7
-    - Type: ActionHighlight
-      Data:
-        Layers:
-          - Type: Damage
-            Pattern: Self
-            Relative: Target
-            Visibility: Always
-          - Type: Selection
-            Pattern: Circle
-            Relative: Executor
-            Visibility: Selecting
+      Effect: !type:Shoot
+        Damage: 5
+    - !type:ActionHighlight
+      Layers:
+        - Type: Damage
+          Pattern: !type:Self {}
+          Relative: Target
+          Visibility: Always
+        - Type: Selection
+          Pattern: !type:Circle
             Range: 7
+          Relative: Executor
+          Visibility: Selecting
 
 
 - Id: Melee
   Components:
-    - Type: Action
-      Data:
-        Name: Melee
-        Icon: '⚔️'
-        EffectId: Melee
-        TargetType: Cell
-        TargetFilter:
-          Pattern: Adjacent
-    - Type: ActionHighlight
-      Data:
-        Layers:
-          - Type: Damage
-            Pattern: Self
-            Relative: Target
-            Visibility: Always
-          - Type: Selection
-            Pattern: Adjacent
-            Relative: Executor
-            Visibility: Selecting
+    - !type:Action
+      Name: Melee
+      Icon: '⚔️'
+      Pace: 10
+      TargetFilter: !type:TargetFilter
+        Pattern: !type:Adjacent {}
+      Effect: !type:Melee
+        Damage: 4
+    - !type:ActionHighlight
+      Layers:
+        - Type: Damage
+          Pattern: !type:Self {}
+          Relative: Target
+          Visibility: Always
+        - Type: Selection
+          Pattern: !type:Adjacent {}
+          Relative: Executor
+          Visibility: Selecting
