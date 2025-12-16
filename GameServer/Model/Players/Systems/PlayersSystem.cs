@@ -26,23 +26,30 @@ public sealed partial class PlayersSystem : BaseSystem
         _event.SubscribeGlobal<PlayerActionsScheduledEvent>(OnPlayerScheduled);
         _event.SubscribeGlobal<CanSchedulePlayerActionsEvent>(OnBeforeScheduling);
         _event.SubscribeGlobal<CanEndPlaningPhaseEvent>(OnCanEndPlaning);
+        _event.SubscribeGlobal<EndExecutingPhaseEvent>(OnExecutingEnds);
     }
 
+    private void OnPlayerScheduled(PlayerActionsScheduledEvent ev)
+    {
+        ev.Player.Component.IsReady = true;
+    }
+    
     private void OnCanEndPlaning(CanEndPlaningPhaseEvent ev)
     {
         if (ev.Game.Players.Any(p => !p.Component.IsReady))
             ev.Cancel();
-    }
-    
-    private void OnPlayerScheduled(PlayerActionsScheduledEvent ev)
-    {
-        ev.Player.Component.IsReady = true;
     }
 
     private void OnBeforeScheduling(CanSchedulePlayerActionsEvent ev)
     {
         if (ev.Player.Component.IsReady)
             ev.Cancel();
+    }
+
+    private void OnExecutingEnds(EndExecutingPhaseEvent ev)
+    {
+        foreach (var player in ev.Game.Players)
+            player.Component.IsReady = false;
     }
     
     public uint GetPlayerId(Entity entity)

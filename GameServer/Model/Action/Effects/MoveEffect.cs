@@ -16,32 +16,20 @@ namespace GameServer.Model.Action.Effects;
 public sealed class MoveEffect : ICellTargetActionEffect, ILoggerUser
 {
     [Dependency] private readonly TransformSystem _xform  = null!;
-    [Dependency] private readonly EventBusSystem _event = null!;
     [Dependency] private readonly EffectSystem _effect = null!;
     
     public ILogger Logger { get; set; } = null!;
     
-
     
-    public int Range { get; set; } = 5;
+    public int Range { get; set; } = 1;
     
     public void Execute(Entity<TransformComponent> executor, Coordinates to)
     {
         var from = _xform.GetCoords(executor);
-        var ev = new AttemptMoveEvent
-        {
-            Game = executor.Ent.Game,
-            From = from,
-            To = to
-        };
-        _event.RaiseLocal(executor, ev);
-        if (ev.Cancelled)
-        {
-            Logger.LogDebug("MoveEffect Cancelled");
+
+        if (!_xform.TryMoveEntity(executor, to))
             return;
-        }
         
-        _xform.SetCoords(executor, to);
         _effect.AddEffectToQueue(new MoveEffectArgs
         {
             Game = executor.Ent.Game,

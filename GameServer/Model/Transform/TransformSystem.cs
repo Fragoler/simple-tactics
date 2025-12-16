@@ -1,6 +1,8 @@
 ﻿using System.Numerics;
+using GameServer.Model.Action.Events;
 using GameServer.Model.Components;
 using GameServer.Model.Entities;
+using GameServer.Model.EventBus;
 using GameServer.Model.Games;
 using GameServer.Model.IoC;
 using GameServer.Model.Map;
@@ -13,17 +15,54 @@ public sealed class TransformSystem : BaseSystem
 {
     [Dependency] private readonly EntitySystem _entity = null!;
     [Dependency] private readonly ComponentSystem _comp = null!;
-    
-    public bool isValidCoords(Game game, Coordinates coords)
+    [Dependency] private readonly EventBusSystem _event = null!;
+
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        
+        _event.SubscribeLocal<AttemptMoveEvent>(OnMoveAttempt);
+    }
+
+    private void OnMoveAttempt(Entity ent, AttemptMoveEvent ev)
+    {
+        var queue =_entity.GetAllEntity(ev.Game);
+
+        foreach (var entity in queue)
+        {
+            if (!_comp.TryGetComponent<TransformComponent>(entity, out var xform))
+                continue;
+
+            if (xform.Coords != ev.To) 
+                continue;
+            
+            ev.Cancel();
+            return;
+        }
+        
+    }
+
+    public bool IsValidCoords(Game game, Coordinates coords)
     {   
         var map = game.Map.Component;
         return coords.X < map.Width && coords.Y < map.Height; 
     }
     
-    public void MoveEntity(Entity entity, Coordinates coords)
+    public bool TryMoveEntity(Entity<TransformComponent> entity, Coordinates coords)
     {
-        var xform = _comp.EnsureComponent<TransformComponent>(entity);
-        xform.Coords = coords;
+        var ev = new AttemptMoveEvent
+        {
+            Game = entity.Ent.Game,
+            From = entity.Component.Coords,
+            To = coords,
+        };
+        _event.RaiseLocal(entity, ev);
+        if (ev.Cancelled)
+            return false;
+        
+        SetCoords(entity, coords);
+        return true;
     }
 
 
@@ -40,16 +79,15 @@ public sealed class TransformSystem : BaseSystem
         return entity.Component.Coords;
     }
 
-    public void SetCoords(Entity entity, Coordinates coords)
+    private void SetCoords(Entity entity, Coordinates coords)
     {
         if (!_comp.TryGetComponent<TransformComponent>(entity, out var xform))
             throw new ArgumentException("Cannot find xform component to set coords");
 
         SetCoords((entity, xform), coords);
     }
-
     
-    public void SetCoords(Entity<TransformComponent> entity, Coordinates coords)
+    private void SetCoords(Entity<TransformComponent> entity, Coordinates coords)
     {
         entity.Component.Coords = coords;
     }

@@ -26,9 +26,6 @@ public sealed class ExplosionEffect : INoneTargetActionEffect
         var targets = _xform.GetEntitiesInArea(executor.Ent.Game, 
             coords => IsInRadius(coords, center, Radius));
 
-        foreach (var target in targets)
-            _health.TryDealDamage(target.Ent, Damage);
-        
         _effect.AddEffectToQueue(new ExplosionEffectArgs
         {
             Game = executor.Ent.Game,
@@ -36,6 +33,9 @@ public sealed class ExplosionEffect : INoneTargetActionEffect
             Center = center,
             Radius = Radius
         });
+        
+        foreach (var target in targets)
+            _health.TryDealDamage(target.Ent, Damage);
     }
     
     private static bool IsInRadius(Coordinates coords, Coordinates center, uint radius)

@@ -76,7 +76,7 @@ public sealed partial class ActionSystem
         }
 
         if (target is { } coords &&
-            !_transform.isValidCoords(entity.Game, coords))
+            !_transform.IsValidCoords(entity.Game, coords))
         {
             Logger.LogWarning("Action has invalid target: {target}", coords);
             return false;

@@ -15,9 +15,10 @@ public sealed partial class GameHub
     
     private async Task HandlePlayerSchedule(Entity<PlayerComponent> player, ScheduledActionDto[] actionsDto)
     {
+        var game = player.Ent.Game;
         
         // Before checks
-        var ev1 = new CanSchedulePlayerActionsEvent{ Game = player.Ent.Game, Player = player};
+        var ev1 = new CanSchedulePlayerActionsEvent{ Game = game, Player = player};
         _event.RaiseGlobal(ev1);
         if (ev1.Cancelled)
         {
@@ -28,7 +29,7 @@ public sealed partial class GameHub
         
         // Formatting
         var actionsN = actionsDto.Select(
-            a => (_entity.GetEntity(a.UnitId, player.Ent.Game), a.ActionId, a.Target)).ToArray();
+            a => (_entity.GetEntity(a.UnitId, game), a.ActionId, a.Target)).ToArray();
 
         if (actionsN.Any(a => a.Item1 is null))
         {
@@ -49,19 +50,19 @@ public sealed partial class GameHub
         }
         //
 
-        await SendPlayersStateToAll(player.Ent.Game);
+        await SendPlayersStateToAll(game);
         
         // try start calculating actions
-        var ev2 = new CanEndPlaningPhaseEvent{ Game = player.Ent.Game };
+        var ev2 = new CanEndPlaningPhaseEvent{ Game = game };
         _event.RaiseGlobal(ev2);
         if (ev2.Cancelled)
             return;
         
-        _phases.StartCalculating(ev2.Game);
-        await Clients.Group(ev2.Game.Token).SendAsync("actionResults", 
-            _effects.RetrieveAllEffects(ev2.Game).Select(u => u.ToDto()));
-        
+        _phases.StartCalculating(game);
+        await Clients.Group(game.Token).SendAsync("actionResults", 
+            _effects.RetrieveAllEffects(game).Select(u => u.ToDto()));
 
+        await SendPlayersStateToAll(game);
         //
     }
 

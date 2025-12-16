@@ -32,8 +32,6 @@ public sealed partial class GameHub
 
     private UnitDto SerializeUnit(Entity<TransformComponent> entity)
     {
-        _logger.LogDebug("Serializing unit, coords: {coords}", entity.Component.Coords);
-        
         var controlled = _comp.GetComponentOrDefault<ControlledComponent>(entity);
 
         // Player ID

@@ -40,7 +40,7 @@ public sealed class HealthSystem : BaseSystem
             return true;
         }
         
-        DealDamage((entity, health), Math.Min(damage, health.MaxHealth));
+        DealDamage((entity, health), Math.Min(damage, health.CurrentHealth));
         
         if (health.CurrentHealth == 0)
             MakeDead(entity);

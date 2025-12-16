@@ -5,6 +5,7 @@ using GameServer.Model.IoC;
 using GameServer.Model.Transform;
 using System.Linq;
 using GameServer.Model.Action.Effects;
+using GameServer.Model.Phases.Events;
 
 namespace GameServer.Model.Action.Systems;
 
@@ -32,6 +33,11 @@ public sealed partial class ActionSystem
             var effect = GetAction(entity.Component2.ActionId).Component.Effect;
             Execute((entity.Ent, entity.Component1), effect, entity.Component2.Target);
         }
+        
+        _event.RaiseGlobal(new EndExecutingPhaseEvent
+        {
+            Game = game
+        });
     }
 
     private void Execute(Entity<TransformComponent> executor, IActionEffect effect, Coordinates? target)
