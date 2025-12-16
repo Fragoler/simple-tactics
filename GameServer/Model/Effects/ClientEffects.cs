@@ -23,6 +23,7 @@ public sealed class MoveEffectArgs : EffectArgs
     public override EffectDto ToDto() => new()
     {
         Type = "Move",
+        Duration = Duration,
         UnitId = Entity.Info.Id,
         From = From,
         To = To
@@ -66,7 +67,7 @@ public sealed class MeleeEffectArgs : EffectArgs
     public Entity Entity { get; init; }
     public Coordinates From { get; init; }
     public Coordinates To { get; init; }
-    public Entity Target { get; init; }
+    public Entity Target { get; init;  }
     
     public override EffectDto ToDto() => new()
     {
