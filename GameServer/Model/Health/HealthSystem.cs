@@ -1,6 +1,6 @@
 ﻿using GameServer.Model.Action.Systems;
 using GameServer.Model.Components;
-using GameServer.Model.Effect;
+using GameServer.Model.Effects;
 using GameServer.Model.Entities;
 using GameServer.Model.EventBus;
 using GameServer.Model.IoC;
@@ -53,6 +53,7 @@ public sealed class HealthSystem : BaseSystem
         Logger.LogInformation("Dealing {damage} damage to {target}", damage, target.Ent.Info.Id);
         _effect.AddEffectToQueue(new DamageEffectArgs
         {
+            Game = target.Ent.Game,
             Amount = damage,
             Entity = target,
         });
@@ -64,6 +65,7 @@ public sealed class HealthSystem : BaseSystem
         Logger.LogInformation("Dead {entity}", entity);
         _effect.AddEffectToQueue(new DeathEffectArgs
         {
+            Game = entity.Game,
             Entity = entity,
         });
         

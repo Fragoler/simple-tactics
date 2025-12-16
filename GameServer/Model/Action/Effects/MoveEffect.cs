@@ -1,6 +1,6 @@
 ﻿using GameServer.Model.Action.Events;
 using GameServer.Model.Action.Systems;
-using GameServer.Model.Effect;
+using GameServer.Model.Effects;
 using GameServer.Model.Entities;
 using GameServer.Model.EventBus;
 using GameServer.Model.IoC;
@@ -44,6 +44,7 @@ public sealed class MoveEffect : ICellTargetActionEffect, ILoggerUser
         _xform.SetCoords(executor, to);
         _effect.AddEffectToQueue(new MoveEffectArgs
         {
+            Game = executor.Ent.Game,
             Entity = executor,
             From = from,
             To = to,

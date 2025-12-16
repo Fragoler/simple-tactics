@@ -5,7 +5,6 @@ using GameServer.Model.IoC;
 using GameServer.Model.Transform;
 using System.Linq;
 using GameServer.Model.Action.Effects;
-using GameServer.Model.Effect;
 
 namespace GameServer.Model.Action.Systems;
 

@@ -1,4 +1,4 @@
-﻿using GameServer.Model.Effect;
+﻿using GameServer.Model.Effects;
 using GameServer.Model.Entities;
 using GameServer.Model.Health;
 using GameServer.Model.IoC;
@@ -35,6 +35,7 @@ public sealed class ShootEffect : ICellTargetActionEffect
             {
                 _effect.AddEffectToQueue(new ShootEffectArgs
                 {
+                    Game = executor.Ent.Game,
                     Entity = executor,
                     From = executor.Component.Coords,
                     To = point,
@@ -50,6 +51,7 @@ public sealed class ShootEffect : ICellTargetActionEffect
             
             _effect.AddEffectToQueue(new ShootEffectArgs
             {
+                Game = executor.Ent.Game,
                 Entity = executor,
                 From = executor.Component.Coords,
                 To = point,

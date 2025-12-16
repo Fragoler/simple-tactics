@@ -1,7 +1,6 @@
 ﻿using GameServer.Model.Action.Components;
 using GameServer.Model.Action.Effects;
 using GameServer.Model.Action.Systems;
-using GameServer.Model.Effect;
 using GameServer.Model.EventBus;
 using GameServer.Model.Phases;
 using GameServer.Presenter.Socket.DTO;

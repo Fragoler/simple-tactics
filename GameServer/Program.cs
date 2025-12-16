@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using GameServer.Middleware;
 using GameServer.Model.IoC;
 using GameServer.Services;
@@ -21,6 +24,14 @@ public sealed class Program
         builder.Services.AddSignalR(options =>
         {
             options.MaximumReceiveMessageSize = 1024 * 1024; // 1Mb
+        }).AddJsonProtocol(options =>
+        {
+            options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            
+            options.PayloadSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver();
+            options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            
+            options.PayloadSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         });
         //
         

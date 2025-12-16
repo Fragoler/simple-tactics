@@ -1,6 +1,6 @@
 ﻿using GameServer.Model.Action.Systems;
 using GameServer.Model.Components;
-using GameServer.Model.Effect;
+using GameServer.Model.Effects;
 using GameServer.Model.Entities;
 using GameServer.Model.EventBus;
 using GameServer.Model.Games;

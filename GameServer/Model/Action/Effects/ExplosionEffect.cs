@@ -1,4 +1,4 @@
-﻿using GameServer.Model.Effect;
+﻿using GameServer.Model.Effects;
 using GameServer.Model.Entities;
 using GameServer.Model.Health;
 using GameServer.Model.IoC;
@@ -31,6 +31,7 @@ public sealed class ExplosionEffect : INoneTargetActionEffect
         
         _effect.AddEffectToQueue(new ExplosionEffectArgs
         {
+            Game = executor.Ent.Game,
             Entity = executor,
             Center = center,
             Radius = Radius

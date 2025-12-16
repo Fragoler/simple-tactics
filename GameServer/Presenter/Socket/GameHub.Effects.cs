@@ -1,4 +1,4 @@
-﻿using GameServer.Model.Effect;
+﻿using GameServer.Model.Effects;
 using GameServer.Model.Entities;
 using GameServer.Model.Phases.Events;
 using GameServer.Model.Players.Components;
@@ -58,7 +58,8 @@ public sealed partial class GameHub
             return;
         
         _phases.StartCalculating(ev2.Game);
-        await Clients.Group(ev2.Game.Token).SendAsync("actionResults", _effects.RetrieveAllEffects(ev2.Game));
+        await Clients.Group(ev2.Game.Token).SendAsync("actionResults", 
+            _effects.RetrieveAllEffects(ev2.Game).Select(u => u.ToDto()));
         
 
         //
