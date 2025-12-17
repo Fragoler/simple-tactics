@@ -22,7 +22,16 @@ public sealed class MeleeEffect : ICellTargetActionEffect
         var targets = _xform.GetEntitiesInArea(executor.Ent.Game, coords => coords == to).ToArray();
 
         if (targets.Length == 0)
+        {
+            _effect.AddEffectToQueue(new MeleeEffectArgs
+            {
+                Game = executor.Ent.Game,
+                Entity = executor,
+                From = executor.Component.Coords,
+                To = to,
+            });
             return;
+        }
         
         var target = targets.First();
 

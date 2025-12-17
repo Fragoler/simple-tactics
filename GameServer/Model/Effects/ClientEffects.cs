@@ -67,7 +67,7 @@ public sealed class MeleeEffectArgs : EffectArgs
     public Entity Entity { get; init; }
     public Coordinates From { get; init; }
     public Coordinates To { get; init; }
-    public Entity Target { get; init;  }
+    public Entity? Target { get; init; } = null;
     
     public override EffectDto ToDto() => new()
     {
@@ -76,7 +76,7 @@ public sealed class MeleeEffectArgs : EffectArgs
         Duration = Duration,
         From = From,
         To = To,
-        TargetUnitId = Target.Info.Id
+        TargetUnitId = Target?.Info.Id
     };
 }
 
