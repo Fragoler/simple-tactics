@@ -30,6 +30,9 @@ public sealed partial class ActionSystem
         Logger.LogInformation("Starting executing");
         foreach (var entity in scheduled)
         {
+            if (!_entity.IsValid(entity))
+                continue;
+                
             var effect = GetAction(entity.Component2.ActionId).Component.Effect;
             Execute((entity.Ent, entity.Component1), effect, entity.Component2.Target);
         }
@@ -43,7 +46,7 @@ public sealed partial class ActionSystem
     private void Execute(Entity<TransformComponent> executor, IActionEffect effect, Coordinates? target)
     {
         Logger.LogInformation("Executing {executor} - {effect}, coords: {coords}", executor.Ent.Info.Id,
-            effect.GetType().Name, target);
+            effect.GetType()!.Name, target);
         
         switch (effect)
         {

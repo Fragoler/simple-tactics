@@ -15,7 +15,7 @@ public sealed class ExplosionEffect : INoneTargetActionEffect
     [Dependency] private readonly HealthSystem _health = null!;
     [Dependency] private readonly EffectSystem _effect = null!;
     
-    public uint Radius { get; set; } = 2;
+    public double Range { get; set; } = 2;
     public uint Damage { get; set; } = 50;
     
     
@@ -24,24 +24,24 @@ public sealed class ExplosionEffect : INoneTargetActionEffect
         var center = executor.Component.Coords;
         
         var targets = _xform.GetEntitiesInArea(executor.Ent.Game, 
-            coords => IsInRadius(coords, center, Radius));
+            coords => IsInRange(coords, center, Range));
 
         _effect.AddEffectToQueue(new ExplosionEffectArgs
         {
             Game = executor.Ent.Game,
             Entity = executor,
             Center = center,
-            Radius = Radius
+            Radius = Range
         });
         
         foreach (var target in targets)
             _health.TryDealDamage(target.Ent, Damage);
     }
     
-    private static bool IsInRadius(Coordinates coords, Coordinates center, uint radius)
+    private static bool IsInRange(Coordinates coords, Coordinates center, double range)
     {
         var dx = (int)coords.X - (int)center.X;
         var dy = (int)coords.Y - (int)center.Y;
-        return dx * dx + dy * dy <= radius * radius;
+        return dx * dx + dy * dy <= range * range;
     }
 }

@@ -1,4 +1,5 @@
-﻿using GameServer.Model.Entities;
+﻿using GameServer.Model.Effects;
+using GameServer.Model.Entities;
 using GameServer.Model.Health;
 using GameServer.Model.IoC;
 using GameServer.Model.Prototype;
@@ -12,7 +13,7 @@ public sealed class MeleeEffect : ICellTargetActionEffect
 {
     [Dependency] private readonly TransformSystem _xform = null!;
     [Dependency] private readonly HealthSystem _health = null!;
-    
+    [Dependency] private readonly EffectSystem _effect = null!;
     
     public uint Damage { get; set; }
     
@@ -22,8 +23,18 @@ public sealed class MeleeEffect : ICellTargetActionEffect
 
         if (targets.Length == 0)
             return;
+        
+        var target = targets.First();
 
-        foreach (var target in targets)
-            _health.TryDealDamage(target, Damage);
+        _effect.AddEffectToQueue(new MeleeEffectArgs
+        {
+            Game = executor.Ent.Game,
+            Entity = executor,
+            From = executor.Component.Coords,
+            To = to,
+            Target = target,
+        });
+        
+        _health.TryDealDamage(target, Damage);
     }
 }

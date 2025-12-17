@@ -61,6 +61,15 @@ public sealed class ShootEffect : ICellTargetActionEffect
             _health.TryDealDamage(hit, Damage);
             return;
         }
+        
+        
+        _effect.AddEffectToQueue(new ShootEffectArgs
+        {
+            Game = executor.Ent.Game,
+            Entity = executor,
+            From = executor.Component.Coords,
+            To = to,
+        });
     }
 
 

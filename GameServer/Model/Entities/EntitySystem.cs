@@ -22,6 +22,11 @@ public sealed class EntitySystem : BaseSystem
             return new Entity(entity, game);
         return null;
     }
+
+    public bool IsValid(Entity entity)
+    {
+        return entity.Info.Valid;
+    }
     
     public Entity CreateEntity(Game game)
     {
@@ -29,6 +34,7 @@ public sealed class EntitySystem : BaseSystem
         
         var entity = new EntityInfo(entityId);
         game.Entities.Add(entityId, entity);
+        
         return new Entity(entity, game);
     }
 
@@ -39,7 +45,8 @@ public sealed class EntitySystem : BaseSystem
             Game = entity.Game,
         };
         _event.RaiseLocal(entity, ev);
-        
+
+        entity.Info.Valid = false;
         entity.Game.Entities.Remove(entity.Info.Id);
     }
 

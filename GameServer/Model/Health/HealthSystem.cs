@@ -50,7 +50,7 @@ public sealed class HealthSystem : BaseSystem
 
     private void DealDamage(Entity<HealthComponent> target, uint damage)
     {
-        Logger.LogInformation("Dealing {damage} damage to {target}", damage, target.Ent.Info.Id);
+        Logger.LogInformation("Dealing {damage} damage to entId {target}", damage, target.Ent.Info.Id);
         _effect.AddEffectToQueue(new DamageEffectArgs
         {
             Game = target.Ent.Game,
@@ -62,7 +62,7 @@ public sealed class HealthSystem : BaseSystem
 
     private void MakeDead(Entity entity)
     {
-        Logger.LogInformation("Dead {entity}", entity);
+        Logger.LogInformation("Dead entId {entity}", entity.Info.Id);
         _effect.AddEffectToQueue(new DeathEffectArgs
         {
             Game = entity.Game,

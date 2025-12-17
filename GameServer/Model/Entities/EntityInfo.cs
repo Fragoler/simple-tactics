@@ -9,6 +9,7 @@ public class EntityInfo(ulong id)
 {
     public readonly ulong Id = id;
     public readonly Dictionary<Type, Component> Components = [];
+    public bool Valid = true;
 }
 
 public readonly record struct Entity(EntityInfo Info, Game Game)
