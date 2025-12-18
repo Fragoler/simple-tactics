@@ -21,7 +21,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Utils\Matrix\Matrix.Core\Matrix.Core.csproj" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <None Update="wwwroot/**/*" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Prototypes/**/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
   
 </Project>
 

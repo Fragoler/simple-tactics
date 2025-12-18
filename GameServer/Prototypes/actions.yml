@@ -30,6 +30,27 @@
           Pattern: !type:Self {}
           Relative: Target
           Visibility: Always
+          
+- Id: DiagonalMove
+  Components:
+    - !type:Action
+      Name: Move
+      Icon: '⇆'
+      Pace: 3
+      TargetFilter: !type:TargetFilter
+        RequiredFreeSpace: true
+        Pattern: !type:AdjacentDiagonal {}
+      Effect: !type:Move {}
+    - !type:ActionHighlight
+      Layers:
+        - Type: Selection
+          Pattern: !type:AdjacentDiagonal {}
+          Relative: Executor
+          Visibility: Selecting
+        - Type: Movement
+          Pattern: !type:Self {}
+          Relative: Target
+          Visibility: Always
 
 - Id: SelfDetonation
   Components:

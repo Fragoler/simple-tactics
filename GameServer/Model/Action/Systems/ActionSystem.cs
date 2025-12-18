@@ -34,10 +34,11 @@ public sealed partial class ActionSystem : BaseSystem
                 continue;
             
             var entity = _proto.SpawnPrototype(prototype, ev.Game);
-                
-            Debug.Assert(_comp.TryGetComponent<ActionComponent>(entity, out var actionComp));
+
+            if (!_comp.TryGetComponent<ActionComponent>(entity, out var actionComp))
+                throw new InvalidOperationException("ActionComponent not found");
             _ioc.InjectDependencies(actionComp.Effect);
-            
+
             _actions.Add(prototype, (entity, actionComp));
         }
     }

@@ -45,6 +45,7 @@ public sealed class Program
         
         
         // Middleware
+        app.UseStaticFiles();
         app.UseRouting();
         app.UseWhen(
             context => context.Request.Path.StartsWithSegments("/api"),
@@ -57,8 +58,13 @@ public sealed class Program
         app.MapHealthChecks("/health/ready");
         app.MapControllers();
         app.MapHub<GameHub>("/game");
-        
 
+        app.MapGet("/", context =>
+        {
+            context.Response.Redirect("/index.html");
+            return Task.CompletedTask;
+        });
+        
         app.Run();
     }
 }
