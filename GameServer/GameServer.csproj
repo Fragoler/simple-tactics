@@ -8,6 +8,8 @@
     <RootNamespace>GameServer</RootNamespace>
       
     <OutputPath>$(MSBuildThisFileDirectory)../bin/</OutputPath>
+      
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>

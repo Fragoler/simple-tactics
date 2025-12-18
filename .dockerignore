@@ -1,0 +1,26 @@
+﻿# Node.js
+**/node_modules/
+**/npm-debug.log
+**/yarn-error.log
+
+# Build outputs
+**/dist/
+**/build/
+**/wwwroot/
+
+# .NET
+**/bin/
+**/obj/
+
+# Git
+.git/
+.gitignore
+.gitmodules
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Docs
+*.md
