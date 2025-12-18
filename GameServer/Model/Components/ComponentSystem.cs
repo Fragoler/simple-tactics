@@ -111,7 +111,7 @@ public class ComponentSystem : BaseSystem
         comp.Owner = ent;
         ent.Info.Components.Add(comp.GetType(), comp);
         
-        _event.RaiseLocal(ent, new ComponentInitEvent
+        _event.RaiseCompLifeCircle(ent, new ComponentInitEvent
         {
             CompType = comp.GetType(),
             Game = ent.Game
