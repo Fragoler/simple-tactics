@@ -1,7 +1,9 @@
 ﻿namespace GameServer.Model.Terrains;
 
 
-
+/// <summary>
+/// A base for cell's terrain
+/// </summary>
 public interface ITerrain
 {
     bool PassableForUnit { get; }

@@ -5,7 +5,10 @@ using GameServer.Model.Prototype;
 
 namespace GameServer.Model.Action.Components;
 
-
+/// <summary>
+/// This component define what action doing.
+/// Action is Entity with this component 
+/// </summary>
 public sealed class ActionComponent : Component
 {
     public string Name { get; set; } = "";
@@ -16,6 +19,7 @@ public sealed class ActionComponent : Component
     public required IActionEffect Effect { get; set; }
     public TargetFilter TargetFilter { get; set; }
 }
+
 
 public enum ActionTargetType
 {

@@ -4,6 +4,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Action.Patterns;
 
 
+/// <summary>
+/// A Pattern that includes all cells in range which is calculated directly
+/// </summary>
 [YamlType("Circle")]
 public sealed class CirclePattern : IRangePattern
 {

@@ -5,6 +5,9 @@ using GameServer.Model.IoC;
 namespace GameServer.Model.Entities;
 
 
+/// <summary>
+/// A system to create and delete entities
+/// </summary>
 public sealed class EntitySystem : BaseSystem
 {
     [Dependency] private EventBusSystem _event = null!;

@@ -8,6 +8,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Action.Effects;
 
 
+/// <summary>
+/// Summon explosion
+/// </summary>
 [YamlType("Explosion")]
 public sealed class ExplosionEffect : INoneTargetActionEffect
 {
@@ -15,7 +18,15 @@ public sealed class ExplosionEffect : INoneTargetActionEffect
     [Dependency] private readonly HealthSystem _health = null!;
     [Dependency] private readonly EffectSystem _effect = null!;
     
+    
+    /// <summary>
+    /// Explosion range. The distance is calculated directly
+    /// </summary>
     public double Range { get; set; } = 2;
+    
+    /// <summary>
+    /// Damage 
+    /// </summary>
     public uint Damage { get; set; } = 50;
     
     

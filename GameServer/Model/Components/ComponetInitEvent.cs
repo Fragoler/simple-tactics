@@ -3,4 +3,7 @@
 namespace GameServer.Model.Components;
 
 
-public class ComponentInitEvent : ComponentLifeCircleEvent {}
+/// <summary>
+/// Raised when component added to an entity
+/// </summary>
+public class ComponentInitEvent : ComponentLifecycleEvent {}

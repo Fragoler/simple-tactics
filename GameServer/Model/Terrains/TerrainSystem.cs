@@ -8,6 +8,10 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Terrains;
 
 
+
+/// <summary>
+/// A system that works with terrains
+/// </summary>
 public sealed class TerrainSystem : BaseSystem
 {
     [Dependency] private readonly EventBusSystem _event = null!;

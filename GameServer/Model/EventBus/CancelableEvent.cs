@@ -2,7 +2,10 @@
 
 namespace GameServer.Model.EventBus;
 
-
+/// <summary>
+/// An Event which is could be cancelled
+/// Use to prevent execution of something
+/// </summary>
 public interface ICancelableEvent : IBaseEvent
 {
     bool Cancelled { get; }

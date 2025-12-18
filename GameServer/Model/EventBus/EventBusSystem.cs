@@ -5,6 +5,10 @@ using GameServer.Model.IoC;
 namespace GameServer.Model.EventBus;
 
 
+
+/// <summary>
+/// A system that provides instruments to raise actions and subscribe on it
+/// </summary>
 public sealed class EventBusSystem : BaseSystem
 {
     [Dependency] private readonly ComponentSystem _comp = null!;
@@ -68,7 +72,7 @@ public sealed class EventBusSystem : BaseSystem
         }
     }
 
-    public void RaiseCompLifeCircle(Entity entity, IComponentLifeCircleEvent ev)
+    public void RaiseCompLifeCircle(Entity entity, IComponentLifecycleEvent ev)
     {
         if (!_compSubs.TryGetValue(ev.GetType(), out var compSubs))
             return;

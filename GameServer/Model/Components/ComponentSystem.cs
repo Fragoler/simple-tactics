@@ -7,6 +7,9 @@ using GameServer.Model.IoC;
 namespace GameServer.Model.Components;
 
 
+/// <summary>
+/// Provide abilities to work with components, like Add/Remove
+/// </summary>
 public class ComponentSystem : BaseSystem
 {
     [Dependency] private EventBusSystem _event = null!;

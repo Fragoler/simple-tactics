@@ -6,6 +6,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Map;
 
 
+/// <summary>
+/// Hold info about game map
+/// </summary>
 public sealed class MapComponent : Component
 {
     public string MapName { get; set; } = "Test Map";

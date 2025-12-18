@@ -3,6 +3,10 @@ using GameServer.Model.Transform;
 
 namespace GameServer.Model.Action.Patterns;
 
+
+/// <summary>
+/// A pattern that includes all adjacent cells vertically and horizontally
+/// </summary>
 [YamlType("Adjacent")]
 public sealed class AdjacentPattern : IPattern
 {

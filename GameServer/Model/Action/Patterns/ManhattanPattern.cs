@@ -4,6 +4,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Action.Patterns;
 
 
+/// <summary>
+/// A pattern that includes all cells that can be reached in a fixed number of vertical and horizontal movements
+/// </summary>
 [YamlType("Manhattan")]
 public sealed class ManhattanPattern : IRangePattern
 {

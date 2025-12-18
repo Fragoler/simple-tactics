@@ -11,6 +11,9 @@ using GameServer.Model.Map;
 namespace GameServer.Model.Transform;
 
 
+/// <summary>
+/// A system that provides operations to entity moving
+/// </summary>
 public sealed class TransformSystem : BaseSystem
 {
     [Dependency] private readonly EntitySystem _entity = null!;

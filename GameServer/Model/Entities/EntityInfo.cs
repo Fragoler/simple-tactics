@@ -5,6 +5,11 @@ using GameServer.Model.Games;
 namespace GameServer.Model.Entities;
 
 
+/// <summary>
+/// Hold entity components, entity's ID and live status
+/// All entity infos are saved in EntitySystem
+/// </summary>
+/// <param name="id">Entity unique for this game id</param>
 public class EntityInfo(ulong id)
 {
     public readonly ulong Id = id;
@@ -12,12 +17,22 @@ public class EntityInfo(ulong id)
     public bool Valid = true;
 }
 
+/// <summary>
+/// Game entity. Can be used to operate easier with entity 
+/// </summary>
+/// <param name="Info">Entity info</param>
+/// <param name="Game">Entity's game</param>
 public readonly record struct Entity(EntityInfo Info, Game Game)
 {
     public readonly EntityInfo Info = Info;
     public readonly Game Game = Game;
 }
 
+
+/// <summary>
+/// Struct which is held game entity and its component
+/// </summary>
+/// <typeparam name="TComp">Entity's component type</typeparam>
 public readonly record struct Entity<TComp>
     where TComp : Component
 {
@@ -48,6 +63,11 @@ public readonly record struct Entity<TComp>
     }
 }
 
+/// <summary>
+/// Struct which is held game entity and its components
+/// </summary>
+/// <typeparam name="TComp1">Entity's component type 1</typeparam>
+/// <typeparam name="TComp2">Entity's component type 2</typeparam>
 public readonly record struct Entity<TComp1, TComp2>
     where TComp1 : Component
     where TComp2 : Component

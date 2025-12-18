@@ -7,6 +7,9 @@ using GameServer.Model.Phases.Events;
 namespace GameServer.Model.Phases;
 
 
+/// <summary>
+/// Used to initiate actions' execution
+/// </summary>
 public sealed class PhasesSystem : BaseSystem
 {
     [Dependency] private readonly EventBusSystem _event = null!;

@@ -6,6 +6,10 @@ using GameServer.Presenter.Socket.DTO;
 namespace GameServer.Model.Effects;
 
 
+/// <summary>
+/// A Base for all client effects.
+/// Use to show something for clients 
+/// </summary>
 public abstract class EffectArgs
 {
     public required Game Game { get; init; }
@@ -14,6 +18,9 @@ public abstract class EffectArgs
     public abstract EffectDto ToDto();
 }
 
+/// <summary>
+/// Move unit to position
+/// </summary>
 public sealed class MoveEffectArgs : EffectArgs
 {
     public Entity Entity { get; init; }
@@ -30,6 +37,10 @@ public sealed class MoveEffectArgs : EffectArgs
     };
 }
 
+
+/// <summary>
+/// Deal unit damage
+/// </summary>
 public sealed class DamageEffectArgs : EffectArgs
 {
     public Entity Entity { get; init; }
@@ -44,6 +55,10 @@ public sealed class DamageEffectArgs : EffectArgs
     };
 }
 
+
+/// <summary>
+/// Make unit to shoot
+/// </summary>
 public sealed class ShootEffectArgs : EffectArgs
 {
     public Entity Entity { get; init; }
@@ -62,6 +77,10 @@ public sealed class ShootEffectArgs : EffectArgs
     };
 }
 
+
+/// <summary>
+/// Make unit to attack
+/// </summary>
 public sealed class MeleeEffectArgs : EffectArgs
 {
     public Entity Entity { get; init; }
@@ -80,6 +99,10 @@ public sealed class MeleeEffectArgs : EffectArgs
     };
 }
 
+
+/// <summary>
+/// Summon explosion
+/// </summary>
 public sealed class ExplosionEffectArgs : EffectArgs
 {
     public Entity Entity { get; init; }
@@ -96,6 +119,10 @@ public sealed class ExplosionEffectArgs : EffectArgs
     };
 }
 
+
+/// <summary>
+/// Kill unit
+/// </summary>
 public sealed class DeathEffectArgs : EffectArgs
 {
     public Entity Entity { get; init; }
@@ -107,6 +134,9 @@ public sealed class DeathEffectArgs : EffectArgs
     };
 }
 
+/// <summary>
+/// Heal unit
+/// </summary>
 public sealed class HealEffectArgs : EffectArgs
 {
     public Entity Entity { get; init; }

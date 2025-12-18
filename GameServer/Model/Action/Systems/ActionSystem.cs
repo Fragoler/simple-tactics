@@ -9,6 +9,10 @@ using GameServer.Model.Prototype;
 namespace GameServer.Model.Action.Systems;
 
 
+/// <summary>
+/// A system that works with actions.
+/// Provides the ability to schedule actions for units and perform all scheduled actions.
+/// </summary>
 public sealed partial class ActionSystem : BaseSystem
 {
     [Dependency] private readonly EventBusSystem _event = null!;

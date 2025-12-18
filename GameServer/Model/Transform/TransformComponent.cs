@@ -4,11 +4,20 @@ using GameServer.Model.Components;
 namespace GameServer.Model.Transform;
 
 
+/// <summary>
+/// Hold position of entity
+/// </summary>
 public sealed class TransformComponent : Component
 {
     public Coordinates Coords { get; set; } = new();
 }
 
+
+/// <summary>
+/// 2D position of entity 
+/// </summary>
+/// <param name="x">coord x</param>
+/// <param name="y">coord y</param>
 public struct Coordinates(uint x, uint y) : IEquatable<Coordinates>
 {
     public uint X { get; set; } = x;

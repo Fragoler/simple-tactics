@@ -11,6 +11,9 @@ using GameServer.Model.Players.Events;
 namespace GameServer.Model.Players.Systems;
 
 
+/// <summary>
+/// A System to work with players 
+/// </summary>
 public sealed partial class PlayersSystem : BaseSystem
 {
     [Dependency] private readonly EntitySystem _entity = null!;

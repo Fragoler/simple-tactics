@@ -10,6 +10,10 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace GameServer.Model.Prototype;
 
+
+/// <summary>
+/// Used to make templated entity 
+/// </summary>
 public sealed class PrototypeSystem : BaseSystem
 {
     [Dependency] private EntitySystem _entity = null!;

@@ -3,7 +3,9 @@ using GameServer.Model.Transform;
 
 namespace GameServer.Model.Action.Patterns;
 
-
+/// <summary>
+/// Includes only one executor's cell 
+/// </summary>
 [YamlType("Self")]
 public sealed class SelfPattern : IPattern
 {

@@ -4,6 +4,9 @@ using GameServer.Model.IoC;
 namespace GameServer.Model.Effects;
 
 
+/// <summary>
+/// Hold all effects that should be played on clients
+/// </summary>
 public sealed class EffectSystem : BaseSystem
 {
     private readonly Dictionary<Game, List<EffectArgs>> _effectQueue = [];

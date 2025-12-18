@@ -5,6 +5,9 @@ using GameServer.Model.Prototype;
 namespace GameServer.Model.Action.Components;
 
 
+/// <summary>
+/// Add to an action to create highlights when action is selected
+/// </summary>
 public sealed class ActionHighlightComponent : Component
 {
     public HighlightedLayer[] Layers = [];

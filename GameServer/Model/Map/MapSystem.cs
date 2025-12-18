@@ -9,6 +9,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Map;
 
 
+/// <summary>
+/// A system to work with game map
+/// </summary>
 public sealed partial class MapSystem : BaseSystem
 {
     [Dependency] private EventBusSystem _event = null!;

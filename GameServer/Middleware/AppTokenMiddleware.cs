@@ -1,5 +1,9 @@
 ﻿namespace GameServer.Middleware;
 
+
+/// <summary>
+/// Requests Application token in Requests Args. It's needed to protect admin API
+/// </summary>
 public class AppTokenMiddleware
 {
     private readonly RequestDelegate _next;

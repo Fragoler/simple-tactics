@@ -8,6 +8,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Action.Effects;
 
 
+/// <summary>
+/// Attack someone at target cell. Play melee attack effect
+/// </summary>
 [YamlType("Melee")]
 public sealed class MeleeEffect : ICellTargetActionEffect
 {
@@ -15,6 +18,9 @@ public sealed class MeleeEffect : ICellTargetActionEffect
     [Dependency] private readonly HealthSystem _health = null!;
     [Dependency] private readonly EffectSystem _effect = null!;
     
+    /// <summary>
+    /// Damage
+    /// </summary>
     public uint Damage { get; set; }
     
     public void Execute(Entity<TransformComponent> executor, Coordinates to)

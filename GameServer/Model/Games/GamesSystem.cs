@@ -8,6 +8,9 @@ using GameServer.Model.Prototype;
 namespace GameServer.Model.Games;
 
 
+/// <summary>
+/// A system to work with games 
+/// </summary>
 public sealed class GamesSystem : BaseSystem
 {
     [Dependency] private PlayersSystem _players = null!;

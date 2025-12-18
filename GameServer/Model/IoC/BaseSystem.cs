@@ -1,6 +1,10 @@
 ﻿namespace GameServer.Model.IoC;
 
 
+/// <summary>
+/// A base for all system
+/// It's supplied auto DI other systems
+/// </summary>
 public abstract class BaseSystem : ILoggerUser
 {
     protected IoCManager IoC { get; private set; } = null!;

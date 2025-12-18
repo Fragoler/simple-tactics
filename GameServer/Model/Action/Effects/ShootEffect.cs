@@ -10,6 +10,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Action.Effects;
 
 
+/// <summary>
+/// Entity shoot to target. Damage first in line direction
+/// </summary>
 [YamlType("Shoot")]
 public sealed class ShootEffect : ICellTargetActionEffect
 {
@@ -19,6 +22,10 @@ public sealed class ShootEffect : ICellTargetActionEffect
     [Dependency] private readonly TerrainSystem _terrain = null!;
     [Dependency] private readonly EffectSystem _effect = null!;
     
+    
+    /// <summary>
+    /// Damage
+    /// </summary>
     public uint Damage { get; set; }
 
 

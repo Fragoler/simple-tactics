@@ -13,6 +13,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model;
 
 
+/// <summary>
+/// Temporary system that should be replaced with unit spawns
+/// </summary>
 public sealed class TempSystem : BaseSystem
 {
     [Dependency] private readonly EventBusSystem _event = null!;

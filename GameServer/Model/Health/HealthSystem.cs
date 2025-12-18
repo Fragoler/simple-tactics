@@ -9,6 +9,9 @@ using GameServer.Model.Map;
 namespace GameServer.Model.Health;
 
 
+/// <summary>
+/// A system that allows you to deal damage to the entity
+/// </summary>
 public sealed class HealthSystem : BaseSystem
 {
     [Dependency] private readonly EventBusSystem _event = null!;

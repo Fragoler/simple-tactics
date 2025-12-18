@@ -2,6 +2,10 @@
 
 namespace GameServer.Model.IoC;
 
+
+/// <summary>
+/// This is the only service in ASP NET in Model
+/// </summary>
 public sealed class IoCManager
 {
     private readonly ILoggerFactory _factory;

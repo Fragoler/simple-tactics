@@ -7,6 +7,9 @@ using GameServer.Model.Transform;
 namespace GameServer.Model.Action.Effects;
 
 
+/// <summary>
+/// Move entity to target cell
+/// </summary>
 [YamlType("Move")]
 public sealed class MoveEffect : ICellTargetActionEffect, ILoggerUser
 {
@@ -14,9 +17,6 @@ public sealed class MoveEffect : ICellTargetActionEffect, ILoggerUser
     [Dependency] private readonly EffectSystem _effect = null!;
     
     public ILogger Logger { get; set; } = null!;
-    
-    
-    public int Range { get; set; } = 1;
     
     public void Execute(Entity<TransformComponent> executor, Coordinates to)
     {
