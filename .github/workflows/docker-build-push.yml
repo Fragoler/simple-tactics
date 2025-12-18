@@ -61,7 +61,6 @@ jobs:
   sign-image:
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: read
     
